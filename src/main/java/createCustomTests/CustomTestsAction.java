@@ -1,4 +1,4 @@
-package createCustomTest;
+package createCustomTests;
 
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -10,7 +10,7 @@ import com.intellij.util.Consumer;
 
 import java.util.List;
 
-public class CustomTestAction extends AnAction {
+public class CustomTestsAction extends AnAction {
 
     @Override
     public void actionPerformed(AnActionEvent e) {

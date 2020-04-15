@@ -1,4 +1,4 @@
-package creatAllTests;
+package createAllTests;
 
 import Settings.SettingState;
 import Settings.SettingsPlugin;
@@ -15,7 +15,7 @@ import com.intellij.psi.search.GlobalSearchScopesCore;
 import java.util.Collection;
 import java.util.Objects;
 
-public class AllTestAction extends AnAction {
+public class AllTestsAction extends AnAction {
 
     @Override
     public void actionPerformed(AnActionEvent e) {

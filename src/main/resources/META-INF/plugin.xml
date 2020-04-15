@@ -31,11 +31,11 @@
                 description="Change path">
             <add-to-group group-id="testPlugin.Action" anchor="last"/>
         </action>
-        <action id="createAllTests.AllTestAction" class="creatAllTests.AllTestAction" text="Create Tests"
+        <action id="createAllTests.AllTestsAction" class="createAllTests.AllTestsAction" text="Create Tests"
                 description="Create tests for all .class files">
             <add-to-group group-id="testPlugin.Action" anchor="first"/>
         </action>
-        <action id="createCustomTest.CustomTestAction" class="createCustomTest.CustomTestAction"
+        <action id="createCustomTests.CustomTestsAction" class="createCustomTests.CustomTestsAction"
                 text="Create Custom Test">
             <add-to-group group-id="testPlugin.Action" anchor="after"
                           relative-to-action="createAllTests.AllTestAction"/>
