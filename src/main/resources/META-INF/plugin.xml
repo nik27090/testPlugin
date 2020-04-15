@@ -38,7 +38,12 @@
         <action id="createCustomTests.CustomTestsAction" class="createCustomTests.CustomTestsAction"
                 text="Create Custom Test">
             <add-to-group group-id="testPlugin.Action" anchor="after"
-                          relative-to-action="createAllTests.AllTestAction"/>
+                          relative-to-action="createAllTests.AllTestsAction"/>
+        </action>
+        <action id="createOneTest.OneTestAction" class="createOneTest.OneTestAction" text="Creat Single Test">
+            <keyboard-shortcut keymap="$default" first-keystroke="ctrl alt Y"/>
+            <add-to-group group-id="testPlugin.Action" anchor="after"
+                          relative-to-action="createCustomTests.CustomTestsAction"/>
         </action>
     </actions>
 </idea-plugin>
