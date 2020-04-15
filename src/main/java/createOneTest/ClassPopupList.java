@@ -1,19 +1,22 @@
+package createOneTest;
+
 import com.intellij.openapi.ui.popup.PopupStep;
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 
-public class PopupList extends BaseListPopupStep<String> {
+public class ClassPopupList extends BaseListPopupStep<String> {
 
-    public PopupList(String title, ArrayList<String> fruits){
-        super(title,fruits);
+    public ClassPopupList(String title, ArrayList<String> classes) {
+        super(title, classes);
     }
 
     @Nullable
     @Override
     public PopupStep onChosen(String selectedValue, boolean finalChoice) {
-        System.out.println("Выбрали: "+ selectedValue);
+        //todo
+        System.out.println("Выбрали: " + selectedValue);
         return PopupStep.FINAL_CHOICE;
     }
 
