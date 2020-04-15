@@ -14,7 +14,6 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <!-- Add your extensions here -->
-        <applicationService serviceImplementation="PluginSettings"/>
         <applicationService serviceImplementation="Settings.SettingsPlugin"/>
     </extensions>
 
@@ -22,7 +21,8 @@
         <!-- Add your actions here -->
         <group id="testPlugin.Action" text="TestPlugin" description="About my plugin">
             <add-to-group group-id="MainMenu" anchor="last"/>
-            <action id="testPlugin.Hello" class="Action" text="Create Testsssss">
+            <action id="createAllTests.AllTestsAction" class="createAllTests.AllTestsAction" text="Create Tests"
+                    description="Create tests for all .class files">
                 <add-to-group group-id="testPlugin.Action" anchor="first"/>
             </action>
         </group>
@@ -30,10 +30,6 @@
         <action id="testPlugin.SettingsAction" class="Settings.SettingAction" text="Setting"
                 description="Change path">
             <add-to-group group-id="testPlugin.Action" anchor="last"/>
-        </action>
-        <action id="createAllTests.AllTestsAction" class="createAllTests.AllTestsAction" text="Create Tests"
-                description="Create tests for all .class files">
-            <add-to-group group-id="testPlugin.Action" anchor="first"/>
         </action>
         <action id="createCustomTests.CustomTestsAction" class="createCustomTests.CustomTestsAction"
                 text="Create Custom Test">
