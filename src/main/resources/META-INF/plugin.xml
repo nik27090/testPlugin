@@ -35,6 +35,11 @@
                 description="Create tests for all .class files">
             <add-to-group group-id="testPlugin.Action" anchor="first"/>
         </action>
+        <action id="createCustomTest.CustomTestAction" class="createCustomTest.CustomTestAction"
+                text="Create Custom Test">
+            <add-to-group group-id="testPlugin.Action" anchor="after"
+                          relative-to-action="createAllTests.AllTestAction"/>
+        </action>
     </actions>
 </idea-plugin>
 

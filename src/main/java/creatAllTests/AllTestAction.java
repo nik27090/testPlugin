@@ -28,7 +28,7 @@ public class AllTestAction extends AnAction {
         //search path
         VirtualFile targetPath = LocalFileSystem.getInstance().
                 findFileByPath(Objects.requireNonNull(e.getProject()).getBasePath() + "/" + inputPath);
-        if (targetPath == null){
+        if (targetPath == null) {
             Messages.showMessageDialog(e.getProject(), "Input path does not exist", "Path Error",
                     Messages.getErrorIcon());
         }
@@ -40,7 +40,7 @@ public class AllTestAction extends AnAction {
 
         //result
         Collection<VirtualFile> classes = FilenameIndex.getAllFilesByExt(e.getProject(), "class", globalSearchScope);
-        for (VirtualFile vf: classes) {
+        for (VirtualFile vf : classes) {
             System.out.println(vf.getName());
         }
 
