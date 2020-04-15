@@ -9,7 +9,7 @@ import org.jetbrains.annotations.Nullable;
 
 @State(
         name = "Settings",
-        storages = { @Storage("settings-value-demo.xml") }
+        storages = {@Storage("settings-value-demo.xml")}
 )
 public class SettingsPlugin implements PersistentStateComponent<SettingState> {
 
@@ -26,7 +26,7 @@ public class SettingsPlugin implements PersistentStateComponent<SettingState> {
         settingState = state;
     }
 
-    public PersistentStateComponent<SettingState> getInstance(){
+    public PersistentStateComponent<SettingState> getInstance() {
         return ServiceManager.getService(SettingsPlugin.class);
     }
 

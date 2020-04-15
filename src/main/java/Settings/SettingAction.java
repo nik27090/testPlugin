@@ -7,11 +7,9 @@ public class SettingAction extends AnAction {
 
     @Override
     public void actionPerformed(AnActionEvent e) {
-        if (e.getProject() != null){
+        if (e.getProject() != null) {
             SettingsDataWrapper dataWrapper = new SettingsDataWrapper(true);
-            if (dataWrapper.showAndGet()){
-                dataWrapper.close(23);
-            }
+            dataWrapper.showAndGet();//return true if user clicked ok button
         }
     }
 }

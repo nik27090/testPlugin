@@ -1,10 +1,6 @@
 package Settings;
 
-import com.intellij.credentialStore.CredentialAttributes;
-import com.intellij.credentialStore.Credentials;
-import com.intellij.ide.passwordSafe.PasswordSafe;
 import com.intellij.openapi.components.PersistentStateComponent;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.uiDesigner.core.AbstractLayout;
@@ -29,7 +25,7 @@ public class SettingsDataWrapper extends DialogWrapper {
         setTitle("TestPlugin Settings");
 
         PersistentStateComponent<SettingState> state = new SettingsPlugin().getInstance();
-        if (state != null){
+        if (state != null) {
             txtInput.setText(Objects.requireNonNull(state.getState()).inputPath);
             txtOutput.setText(state.getState().outputPath);
         }
@@ -64,9 +60,12 @@ public class SettingsDataWrapper extends DialogWrapper {
         PersistentStateComponent<SettingState> state = new SettingsPlugin().getInstance();
         Objects.requireNonNull(state.getState()).inputPath = inputText;
         state.getState().outputPath = outputText;
+
+        close(OK_EXIT_CODE);
     }
 
-    private JComponent label(String text){
+
+    private JComponent label(String text) {
         JBLabel label = new JBLabel(text);
         label.setComponentStyle(UIUtil.ComponentStyle.SMALL);
         label.setFontColor(UIUtil.FontColor.BRIGHTER);
