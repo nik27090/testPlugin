@@ -22,13 +22,18 @@
         <!-- Add your actions here -->
         <group id="testPlugin.Action" text="TestPlugin" description="About my plugin">
             <add-to-group group-id="MainMenu" anchor="last"/>
-            <action id="testPlugin.Hello" class="Action" text="Create Tests">
+            <action id="testPlugin.Hello" class="Action" text="Create Testsssss">
                 <add-to-group group-id="testPlugin.Action" anchor="first"/>
             </action>
         </group>
 
-        <action id="testPlugin.SettingsAction" class="Settings.SettingAction" text="Setting" description="Change path">
+        <action id="testPlugin.SettingsAction" class="Settings.SettingAction" text="Setting"
+                description="Change path">
             <add-to-group group-id="testPlugin.Action" anchor="last"/>
+        </action>
+        <action id="createAllTests.AllTestAction" class="creatAllTests.AllTestAction" text="Create Tests"
+                description="Create tests for all .class files">
+            <add-to-group group-id="testPlugin.Action" anchor="first"/>
         </action>
     </actions>
 </idea-plugin>

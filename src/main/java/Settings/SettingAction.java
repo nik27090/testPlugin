@@ -2,6 +2,7 @@ package Settings;
 
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.ui.Messages;
 
 public class SettingAction extends AnAction {
 
@@ -9,7 +10,10 @@ public class SettingAction extends AnAction {
     public void actionPerformed(AnActionEvent e) {
         if (e.getProject() != null) {
             SettingsDataWrapper dataWrapper = new SettingsDataWrapper(true);
-            dataWrapper.showAndGet();//return true if user clicked ok button
+            if (dataWrapper.showAndGet()) {
+                Messages.showMessageDialog(e.getProject(), "Settings have been saved", "Settings",
+                        Messages.getInformationIcon());
+            }
         }
     }
 }
