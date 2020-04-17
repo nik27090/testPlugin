@@ -70,16 +70,16 @@ public class Generator {
     }
 
     public void run(List<Class> listClass){
-
-
         List<String> classes = new LinkedList<String>();
         String ls = System.lineSeparator();
         for (Class cl : listClass) {
             String classDesc = "public class " + cl.getSimpleName() + "Test {" + ls;
+
+            classDesc = classDesc + "\tprivate " + cl.getSimpleName() +" " + firstCharSmall(cl.getSimpleName()) + ";" + ls;
             List<String> methods = new LinkedList<String>();
             for (Method m : cl.getDeclaredMethods()) {
                 String methodDesc = "\t@Test" + ls;
-                methodDesc += "\tpublic void " + m.getName() + "Test {" + ls;
+                methodDesc += "\tpublic void " + m.getName() + "Test() throws Exception {" + ls;
                 methodDesc += "\t\t// Setup" + ls;
                 int parCnt = m.getParameterCount();
                 List<String> arguments = new LinkedList<String>();
@@ -103,9 +103,9 @@ public class Generator {
             }
             classDesc += String.join(ls, methods);
             classDesc += "}" + ls;
-
-            classDesc = "import " + cl.getCanonicalName() + ";" + ls + ls + classDesc;
-
+            classDesc = "import org.junit.jupiter.api.Test;" + ls + ls + classDesc;
+            classDesc = "package " + cl.getCanonicalName().substring(0,cl.getCanonicalName().lastIndexOf("."))
+                    + ";" + ls + classDesc;
             classes.add(classDesc);
 
             String baseDir = AllTestsAction.project.getBasePath();

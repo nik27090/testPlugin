@@ -25,8 +25,6 @@ public class Helper {
         //search path
         VirtualFile targetPath = LocalFileSystem.getInstance().
                 findFileByPath(project.getBasePath() + "/" + inputPath);
-
-        System.out.println("AAAA2 " + targetPath.toString());
         if (targetPath == null) {
             Messages.showMessageDialog(project, "Input path does not exist", "Path Error",
                     Messages.getErrorIcon());
@@ -35,17 +33,12 @@ public class Helper {
 
         GlobalSearchScope globalSearchScope = new GlobalSearchScopesCore.DirectoryScope
                 (project, Objects.requireNonNull(targetPath), true);
-        System.out.println("AAAAA3 " + globalSearchScope.toString());
+        System.out.println(globalSearchScope.toString());
 
         //result
         Collection<VirtualFile> classes = FilenameIndex.getAllFilesByExt(project, "class", globalSearchScope);
-        System.out.println("AAAAA4 " + classes.size());
-
         for (VirtualFile vf : classes) {
-            System.out.println("AAAAAA");
             System.out.println(vf.getName());
-            System.out.println(vf.getPath());
-            System.out.println("AAAAAA1111");
         }
 
         return classes;
