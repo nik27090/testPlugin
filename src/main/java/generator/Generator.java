@@ -17,11 +17,14 @@ public class Generator {
         return str.substring(0, 1).toLowerCase() + str.substring(1);
     }
 
+
+
     private static String getValueByType(Class<?> typ, String parName) {
         String ls = System.lineSeparator();
         String res = "\t\tfinal " + typ.getCanonicalName() + " " +
                 parName + " = ";
         String typName = typ.getSimpleName();
+
         if (typName.equals("char")) {
             char rndChar = (char)(rnd.nextInt(127 - 32) + 32);
             res += "'" + rndChar + "'";
