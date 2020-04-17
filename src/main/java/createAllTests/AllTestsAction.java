@@ -3,6 +3,7 @@ package createAllTests;
 import Settings.SettingsPlugin;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import generator.Generator;
 
@@ -18,11 +19,12 @@ import java.util.ArrayList;
 public class AllTestsAction extends AnAction {
 
     Generator generator = new Generator();
+    public static Project project = null;
 
     @Override
     public void actionPerformed(AnActionEvent e) {
 //        Collection<VirtualFile> classes = getAllProjectClasses(Objects.requireNonNull(e.getProject()));
-
+        project = e.getProject();
         //путь, где лежать скомпилированные классы
         String path = e.getProject().getBasePath() + new SettingsPlugin().getInstance().getState().inputPath;
 

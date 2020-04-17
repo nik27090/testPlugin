@@ -1,5 +1,7 @@
 package generator;
 
+import createAllTests.AllTestsAction;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -106,10 +108,9 @@ public class Generator {
 
             classes.add(classDesc);
 
-
-            String baseDir = System.getProperty("user.dir");
+            String baseDir = AllTestsAction.project.getBasePath();
             String middleDir = "src" + File.separator + "test" +
-                    File.separator + "java2";
+                    File.separator + "java";
             String dir = cl.getCanonicalName().replace(".", File.separator);
             String filePath = baseDir + File.separator + middleDir + File.separator + dir + "Test.java";
             File theFile = new File(filePath);

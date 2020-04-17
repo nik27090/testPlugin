@@ -10,14 +10,11 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.GlobalSearchScopesCore;
-import generator.Generator;
 
 import java.util.Collection;
 import java.util.Objects;
 
 public class Helper {
-
-
     public static Collection<VirtualFile> getAllProjectClasses(Project project) {
         //Settings
         PersistentStateComponent<SettingState> state = new SettingsPlugin().getInstance();
@@ -29,7 +26,7 @@ public class Helper {
         VirtualFile targetPath = LocalFileSystem.getInstance().
                 findFileByPath(project.getBasePath() + "/" + inputPath);
 
-        System.out.println("AAAA2 "+targetPath.toString());
+        System.out.println("AAAA2 " + targetPath.toString());
         if (targetPath == null) {
             Messages.showMessageDialog(project, "Input path does not exist", "Path Error",
                     Messages.getErrorIcon());
@@ -38,11 +35,11 @@ public class Helper {
 
         GlobalSearchScope globalSearchScope = new GlobalSearchScopesCore.DirectoryScope
                 (project, Objects.requireNonNull(targetPath), true);
-        System.out.println("AAAAA3 "+globalSearchScope.toString());
+        System.out.println("AAAAA3 " + globalSearchScope.toString());
 
         //result
         Collection<VirtualFile> classes = FilenameIndex.getAllFilesByExt(project, "class", globalSearchScope);
-        System.out.println("AAAAA4 "+classes.size());
+        System.out.println("AAAAA4 " + classes.size());
 
         for (VirtualFile vf : classes) {
             System.out.println("AAAAAA");
