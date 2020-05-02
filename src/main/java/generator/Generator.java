@@ -1,12 +1,14 @@
 package generator;
 
 import createAllTests.AllTestsAction;
+import org.apache.commons.lang.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
@@ -78,6 +80,9 @@ public class Generator {
             classDesc = classDesc + "\tprivate " + cl.getSimpleName() +" " + firstCharSmall(cl.getSimpleName()) + ";" + ls;
             List<String> methods = new LinkedList<String>();
             for (Method m : cl.getDeclaredMethods()) {
+                if (!Modifier.isPublic(m.getModifiers())) {
+                    continue;
+                }
                 String methodDesc = "\t@Test" + ls;
                 methodDesc += "\tpublic void " + m.getName() + "Test() throws Exception {" + ls;
                 methodDesc += "\t\t// Setup" + ls;
@@ -93,7 +98,31 @@ public class Generator {
                 methodDesc += "\t\t// Run the test" + ls;
                 String resPart = "";
                 if (!m.getReturnType().getName().equals("void")) {
-                    resPart = m.getReturnType().getName() + " res = ";
+                    String typeMethod = m.getReturnType().getName();
+                    if (typeMethod.endsWith(";")){
+                        typeMethod = typeMethod.substring(0, typeMethod.length() - 1);
+                    }
+                    int countBracket = StringUtils.countMatches(typeMethod, "[");
+                    if (countBracket != 0){
+                       typeMethod = typeMethod.replace("[", "");
+                       char first = typeMethod.charAt(0);
+                       typeMethod = typeMethod.substring(1);
+                       if (typeMethod.equals("")) {
+                           switch (first) {
+                               case 'Z': typeMethod = "boolean"; break;
+                               case 'B': typeMethod = "byte"; break;
+                               case 'C': typeMethod = "char"; break;
+                               case 'D': typeMethod = "double"; break;
+                               case 'F': typeMethod = "float"; break;
+                               case 'I': typeMethod = "int"; break;
+                               case 'J': typeMethod = "long"; break;
+                               case 'S': typeMethod = "short"; break;
+                               default: System.out.println("This symbol is not supported: " + first);
+                           }
+                       }
+                       typeMethod = typeMethod + StringUtils.repeat("[]", countBracket);
+                    }
+                    resPart = typeMethod + " res = ";
                 }
                 methodDesc += "\t\t" + resPart +
                         firstCharSmall(cl.getSimpleName()) + "." +
