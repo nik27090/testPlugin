@@ -25,22 +25,22 @@ public class ValueGen {
     private String genPrimitive(Class<?> c) {
         String dataType = getTypeName(c);
         String res = null;
-        if (dataType.equals("boolean")) {
+        if (dataType.equals("boolean") || dataType.equals("java.lang.Boolean")) {
             res = rnd.nextInt(2) == 1 ? "true" : "false";
-        } else if (dataType.equals("byte")) {
+        } else if (dataType.equals("byte") || dataType.equals("java.lang.Byte")) {
             res = String.valueOf((byte)rnd.nextInt());
-        } else if (dataType.equals("char")) {
+        } else if (dataType.equals("char") || dataType.equals("java.lang.Character")) {
             char rndChar = (char)(rnd.nextInt(127 - 32) + 32);
             res = "'" + rndChar + "'";
-        } else if (dataType.equals("double")) {
+        } else if (dataType.equals("double") || dataType.equals("java.lang.Double")) {
             res = String.valueOf(rnd.nextDouble());
-        } else if (dataType.equals("float")) {
+        } else if (dataType.equals("float") || dataType.equals("java.lang.Float")) {
             res = String.valueOf((float)rnd.nextDouble());
-        } else if (dataType.equals("int")) {
+        } else if (dataType.equals("int") || dataType.equals("java.lang.Integer")) {
             res = String.valueOf(rnd.nextInt());
-        } else if (dataType.equals("long")) {
+        } else if (dataType.equals("long") || dataType.equals("java.lang.Long")) {
             res = String.valueOf(rnd.nextLong()) + "L";
-        } else if (dataType.equals("short")) {
+        } else if (dataType.equals("short") || dataType.equals("java.lang.Short")) {
             res = String.valueOf((short) rnd.nextInt());
         }
         return res;
@@ -185,6 +185,19 @@ public class ValueGen {
         return "new " + getTypeName(c) + "(" + String.join(", ", arguments) + ")";
     }
 
+    private boolean isPrimitive(Class<?> c) {
+        return c.isPrimitive() ||
+                c.getTypeName().equals("java.lang.Short") ||
+                c.getTypeName().equals("java.lang.Boolean") ||
+                c.getTypeName().equals("java.lang.Byte") ||
+                c.getTypeName().equals("java.lang.Character") ||
+                c.getTypeName().equals("java.lang.Double") ||
+                c.getTypeName().equals("java.lang.Float") ||
+                c.getTypeName().equals("java.lang.Integer") ||
+                c.getTypeName().equals("java.lang.Long") ||
+                c.getTypeName().equals("java.lang.Short");
+    }
+
     private String genValue(Type t) {
         if (t instanceof TypeVariable) {
             // e.g. T for: "<T> void foo(List<T> some) {}"
@@ -223,7 +236,7 @@ public class ValueGen {
             return genArrayValue(t);
         } else if (t instanceof Class<?>) {
             Class<?> c = (Class<?>) t;
-            if (c.isPrimitive()) {
+            if (isPrimitive(c)) {
                 if (getTypeName(c).equals("void")) {
                     throw new RuntimeException("Cannot generate value for void-type");
                 }
