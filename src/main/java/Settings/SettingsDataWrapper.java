@@ -18,6 +18,7 @@ public class SettingsDataWrapper extends DialogWrapper {
     private JPanel panel = new JPanel(new GridBagLayout());
     private JTextField txtInput = new JTextField();
     private JTextField txtOutput = new JTextField();
+    private JTextField txtNumberOfTests = new JTextField();
 
     protected SettingsDataWrapper(boolean canBeParent) {
         super(canBeParent);
@@ -28,6 +29,7 @@ public class SettingsDataWrapper extends DialogWrapper {
         if (state != null) {
             txtInput.setText(Objects.requireNonNull(state.getState()).inputPath);
             txtOutput.setText(state.getState().outputPath);
+            txtNumberOfTests.setText(state.getState().numberOfTests);
         }
     }
 
@@ -47,6 +49,9 @@ public class SettingsDataWrapper extends DialogWrapper {
         panel.add(label("Output repository path:"), gb.nextLine().next().weightx(0.2));
         panel.add(txtOutput, gb.next().weightx(0.8));
 
+        panel.add(label("Number of tests"), gb.nextLine().next().weightx(0.2));
+        panel.add(txtNumberOfTests, gb.next().weightx(0.8));
+
         return panel;
     }
 
@@ -54,12 +59,15 @@ public class SettingsDataWrapper extends DialogWrapper {
     protected void doOKAction() {
         String inputText = txtInput.getText();
         String outputText = txtOutput.getText();
+        String numTests = txtNumberOfTests.getText();
         System.out.println(inputText);
         System.out.println(outputText);
+        System.out.println(numTests);
 
         PersistentStateComponent<SettingState> state = new SettingsPlugin().getInstance();
         Objects.requireNonNull(state.getState()).inputPath = inputText;
         state.getState().outputPath = outputText;
+        state.getState().numberOfTests = numTests;
 
         close(OK_EXIT_CODE);
     }
