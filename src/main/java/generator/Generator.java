@@ -24,12 +24,14 @@ public class Generator {
         srcCode += StringGen.ls;
         TestMethodGen methodGen;
         for (Method m : c.getDeclaredMethods()) {
-            if (!Modifier.isPublic(m.getModifiers())) {
-                continue;
+            for (int i = 0; i < 10; i++) {
+                if (!Modifier.isPublic(m.getModifiers())) {
+                    continue;
+                }
+                methodGen = new TestMethodGen(m, fieldName);
+                String methodSrcCode = methodGen.gen(i);
+                methodSrcCodeList.add(methodSrcCode);
             }
-            methodGen = new TestMethodGen(m, fieldName);
-            String methodSrcCode = methodGen.gen();
-            methodSrcCodeList.add(methodSrcCode);
         }
         srcCode += String.join(StringGen.ls, methodSrcCodeList);
         srcCode += "}" + StringGen.ls;
