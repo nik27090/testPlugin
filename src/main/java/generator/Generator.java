@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class Generator {
-    private String genForClass(Class c) {
+    private String generateTestForClass(Class c) {
         String className = c.getSimpleName();
         if (className.length() <= 0) {
             return "";
@@ -39,12 +39,12 @@ public class Generator {
     }
 
     public void run(List<Class> classList){
-        List<String> srcCodeList = new LinkedList<String>();
+        List<String> srcCodeList = new LinkedList<>();
         for (Class c : classList) {
             if (c.getSimpleName().length() <= 0) {
                 continue;
             }
-            String srcCode = genForClass(c);
+            String srcCode = generateTestForClass(c);
             Util.createFile(c, srcCode);
             Util.printFile(srcCode);
             System.out.println(StringGen.ls);

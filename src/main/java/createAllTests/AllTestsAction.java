@@ -6,6 +6,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import generator.Generator;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,26 +24,26 @@ public class AllTestsAction extends AnAction {
 
     @Override
     public void actionPerformed(AnActionEvent e) {
-//        Collection<VirtualFile> classes = getAllProjectClasses(Objects.requireNonNull(e.getProject()));
+
         project = e.getProject();
+
         //путь, где лежать скомпилированные классы
         String path = e.getProject().getBasePath() + new SettingsPlugin().getInstance().getState().inputPath;
 
-        System.out.println("Path: "+path);
         //подбираем все скомпилированные классы
-        ArrayList<File> files = new ArrayList<>();
-        try {
-            Files.walk(Paths.get(path))
-                    .filter(Files::isRegularFile)
-                    .forEach((f) -> {
-                        if (f.getFileName().toString().endsWith(".class")) {
-                            files.add(f.toFile());
-                        }
-                    });
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
+        ArrayList<File> files = getCompliedFiles(path);
 
+        ArrayList<Class> classes = getClasses(path, files);
+
+        //создаем unit тесты по загруженным классам
+        generator.run(classes);
+
+        Messages.showMessageDialog(e.getProject(), "Test creation completed", "Creator Tests",
+                Messages.getInformationIcon());
+    }
+
+    @NotNull
+    private ArrayList<Class> getClasses(String path, ArrayList<File> files) {
         ArrayList<Class> classes = new ArrayList<>();
 
         //url до места, откуда подгружаем классы
@@ -65,12 +66,24 @@ public class AllTestsAction extends AnAction {
         } catch (ClassNotFoundException ex) {
             ex.printStackTrace();
         }
+        return classes;
+    }
 
-        //создаем unit тесты по загруженным классам
-        generator.run(classes);
-
-        Messages.showMessageDialog(e.getProject(), "Test creation completed", "Creator Tests",
-                Messages.getInformationIcon());
+    @NotNull
+    private ArrayList<File> getCompliedFiles(String path) {
+        ArrayList<File> files = new ArrayList<>();
+        try {
+            Files.walk(Paths.get(path))
+                    .filter(Files::isRegularFile)
+                    .forEach((f) -> {
+                        if (f.getFileName().toString().endsWith(".class")) {
+                            files.add(f.toFile());
+                        }
+                    });
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+        return files;
     }
 
     private String getPackageName(String path, String basePath, String className) {
