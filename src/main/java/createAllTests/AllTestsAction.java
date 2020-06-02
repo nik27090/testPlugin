@@ -1,12 +1,15 @@
 package createAllTests;
 
+import Settings.SettingState;
 import Settings.SettingsPlugin;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import generator.Generator;
+import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.SystemIndependent;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,80 +17,79 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static java.util.Objects.requireNonNull;
 
 public class AllTestsAction extends AnAction {
 
-    Generator generator = new Generator();
     public static Project project = null;
 
     @Override
-    public void actionPerformed(AnActionEvent e) {
+    @SneakyThrows
+    public void actionPerformed(AnActionEvent generateAllTestsAction) {
 
-        project = e.getProject();
+        project = generateAllTestsAction.getProject();
+        @SystemIndependent String projectBasePath = requireNonNull(project).getBasePath();
 
-        //путь, где лежать скомпилированные классы
-        String path = e.getProject().getBasePath() + new SettingsPlugin().getInstance().getState().inputPath;
+        SettingsPlugin settings = new SettingsPlugin();
+        SettingState settingParameters = settings.getInstance().getState();
+        @SystemIndependent String localClassFolderPath = requireNonNull(settingParameters).getInputPath();
 
-        //подбираем все скомпилированные классы
-        ArrayList<File> files = getCompliedFiles(path);
+        String absolutePathToClasses = projectBasePath + localClassFolderPath;
 
-        ArrayList<Class> classes = getClasses(path, files);
+        List<Class> classes = getClasses(absolutePathToClasses);
 
-        //создаем unit тесты по загруженным классам
-        generator.run(classes);
+        String outputPath = settingParameters.getOutputPath();
+        Generator generator = new Generator(project, outputPath);
+        generator.run(classes,10);
 
-        Messages.showMessageDialog(e.getProject(), "Test creation completed", "Creator Tests",
+        Messages.showMessageDialog(generateAllTestsAction.getProject(), "Test creation completed", "Creator Tests",
                 Messages.getInformationIcon());
     }
 
     @NotNull
-    private ArrayList<Class> getClasses(String path, ArrayList<File> files) {
-        ArrayList<Class> classes = new ArrayList<>();
+    private ClassLoader getClassLoader(String classpath) throws MalformedURLException {
 
-        //url до места, откуда подгружаем классы
-        URL url = null;
-        try {
-            url = new File(path).toURI().toURL();
-        } catch (MalformedURLException ex) {
-            ex.printStackTrace();
-        }
+        File classPathFolder = new File(classpath);
+
+        URL url = classPathFolder.toURI().toURL();
         URL[] urls = new URL[]{url};
 
-        //подгружаем классы по имени и названию пакета
-        ClassLoader cl = new URLClassLoader(urls);
-        Class cls = null;
-        try {
-            for (File file : files) {
-                cls = cl.loadClass(getPackageName(file.getPath(), new File(path).getPath(), file.getName()) + file.getName().replace(".class", ""));
-                classes.add(cls);
-            }
-        } catch (ClassNotFoundException ex) {
-            ex.printStackTrace();
-        }
-        return classes;
+        return new URLClassLoader(urls);
     }
 
     @NotNull
-    private ArrayList<File> getCompliedFiles(String path) {
-        ArrayList<File> files = new ArrayList<>();
-        try {
-            Files.walk(Paths.get(path))
-                    .filter(Files::isRegularFile)
-                    .forEach((f) -> {
-                        if (f.getFileName().toString().endsWith(".class")) {
-                            files.add(f.toFile());
-                        }
-                    });
-        } catch (IOException ex) {
-            ex.printStackTrace();
+    private List<Class> getClasses(String compiledClassesPath) throws IOException, ClassNotFoundException {
+
+        Path compiledClassesFolder = Paths.get(compiledClassesPath);
+
+        List<String> classNames = Files.walk(compiledClassesFolder)
+                .filter(file -> file.getFileName().toString().endsWith(".class"))
+                .map(Path::toFile)
+                .map(file -> getPackageName(
+                        file.getPath(),
+                        compiledClassesPath,
+                        file.getName()) + file.getName().replace(".class", "")
+                )
+                .collect(Collectors.toList());
+
+        ClassLoader classLoader = getClassLoader(compiledClassesPath);
+
+        List<Class> classes = new ArrayList<>();
+        for (String className : classNames) {
+            classes.add(classLoader.loadClass(className));
         }
-        return files;
+
+        return classes;
     }
 
-    private String getPackageName(String path, String basePath, String className) {
-        String packageName = path
+    private String getPackageName(String filePath, String basePath, String className) {
+        String packageName = filePath
                 .replace(basePath, "")
                 .replace(className, "")
                 .replaceFirst("\\/", "")

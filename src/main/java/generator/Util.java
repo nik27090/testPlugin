@@ -20,9 +20,6 @@ public class Util {
     private static final Random rnd = new Random();
 
     public static String firstCharSmall(String str) {
-        if (str.length() <= 0) {
-            return "";
-        }
         return str.substring(0, 1).toLowerCase() + str.substring(1);
     }
 
