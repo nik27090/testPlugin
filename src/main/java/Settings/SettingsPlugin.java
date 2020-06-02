@@ -29,5 +29,4 @@ public class SettingsPlugin implements PersistentStateComponent<SettingState> {
     public PersistentStateComponent<SettingState> getInstance() {
         return ServiceManager.getService(SettingsPlugin.class);
     }
-
 }

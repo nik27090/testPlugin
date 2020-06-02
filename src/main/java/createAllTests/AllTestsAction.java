@@ -46,7 +46,7 @@ public class AllTestsAction extends AnAction {
 
         String outputPath = settingParameters.getOutputPath();
         Generator generator = new Generator(project, outputPath);
-        generator.run(classes,10);
+        generator.run(classes,Integer.parseInt(settingParameters.getNumberOfTests()));
 
         Messages.showMessageDialog(generateAllTestsAction.getProject(), "Test creation completed", "Creator Tests",
                 Messages.getInformationIcon());
