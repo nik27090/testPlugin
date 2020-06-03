@@ -27,13 +27,11 @@ import static java.util.Objects.requireNonNull;
 
 public class AllTestsAction extends AnAction {
 
-    public static Project project = null;
-
     @Override
     @SneakyThrows
     public void actionPerformed(AnActionEvent generateAllTestsAction) {
 
-        project = generateAllTestsAction.getProject();
+        Project project = generateAllTestsAction.getProject();
         @SystemIndependent String projectBasePath = requireNonNull(project).getBasePath();
 
         SettingsPlugin settings = new SettingsPlugin();

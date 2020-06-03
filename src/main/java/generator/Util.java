@@ -19,32 +19,6 @@ import java.util.regex.Pattern;
 public class Util {
     private static final Random rnd = new Random();
 
-    public static String firstCharSmall(String str) {
-        return str.substring(0, 1).toLowerCase() + str.substring(1);
-    }
-
-    public static void createFile(Class c, String srcCode) {
-        String baseDir = AllTestsAction.project.getBasePath();
-        String middleDir = "src" + File.separator + "test" +
-                File.separator + "java";
-        String dir = c.getCanonicalName().replace(".", File.separator);
-        String filePath = baseDir + File.separator + middleDir + File.separator + dir + "Test.java";
-        File theFile = new File(filePath);
-        File fullDirFile = theFile.getParentFile();
-        if (!fullDirFile.exists()) {
-            fullDirFile.mkdirs();
-        }
-        try (PrintWriter writer = new PrintWriter(filePath, "utf-8")) {
-            writer.print(srcCode);
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    public static void printFile(String srcCode) {
-        System.out.println(srcCode);
-    }
-
     public static List<String> addTabs(List<String> src, int count) {
         List<String> res = new LinkedList<String>();
         for (String line : src) {

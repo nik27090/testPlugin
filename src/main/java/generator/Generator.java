@@ -5,15 +5,13 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.lang.reflect.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Random;
-import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.*;
 
@@ -23,17 +21,17 @@ public class Generator {
 
     private String outputPath;
 
-    public static String ls = System.lineSeparator();
+    public String lineSeparator = System.lineSeparator();
 
-    public static String packageStatement(String packageName) {
-        return "package " + packageName + ";" + ls + ls;
+    public String packageStatement(String packageName) {
+        return "package " + packageName + ";" + lineSeparator + lineSeparator;
     }
 
-    public static String importStatement(String importClassStr) {
-        return "import " + importClassStr + ";" + ls;
+    public String importStatement(String importClassStr) {
+        return "import " + importClassStr + ";" + lineSeparator;
     }
 
-    public static String genField(String modifier, String className, String fieldName) {
+    public static String generateField(String modifier, String className, String fieldName) {
         return "\t" + modifier + " " + className + " " + fieldName + ";" + StringGen.ls;
     }
 
@@ -49,19 +47,26 @@ public class Generator {
         srcCode += getTestHeader(clazz);
 
         List<String> methodSourceCode = getTestMethods(clazz, numberOfTestsPerMethod);
-        srcCode += String.join(ls, methodSourceCode);
 
-        srcCode += "}" + ls;
+        srcCode += String.join(lineSeparator, methodSourceCode);
+        srcCode += "}" + lineSeparator;
+
         return srcCode;
     }
 
     @NotNull
     private List<String> getTestMethods(Class clazz, int numberOfTestsPerMethod) {
-        String testedClassFieldName = clazz.getSimpleName().substring(0, 1).toLowerCase() + clazz.getSimpleName().substring(1);
+
+        String clazzSimpleName = clazz.getSimpleName();
+        String testedClassFieldName = clazzSimpleName.substring(0, 1).toLowerCase() + clazzSimpleName.substring(1);
+
         List<String> methodSrcCodeList = new LinkedList<String>();
+
         TestMethodGen methodGen;
         for (Method m : clazz.getDeclaredMethods()) {
+
             for (int i = 0; i < numberOfTestsPerMethod; i++) {
+
                 if (!Modifier.isPublic(m.getModifiers())) {
                     continue;
                 }
@@ -76,10 +81,10 @@ public class Generator {
     @NotNull
     private String getTestHeader(Class clazz) {
         String newCode = "public class " + clazz.getSimpleName() + "Test {" + StringGen.ls;
-        newCode += genField("private", clazz.getSimpleName(), clazz.getSimpleName().substring(0, 1).toLowerCase() + clazz.getSimpleName().substring(1)) + ls;
+        newCode += generateField("private", clazz.getSimpleName(), clazz.getSimpleName().substring(0, 1).toLowerCase() + clazz.getSimpleName().substring(1)) + lineSeparator;
         TestBeforeMethodGen beforeGen = new TestBeforeMethodGen(clazz, clazz.getSimpleName().substring(0, 1).toLowerCase() + clazz.getSimpleName().substring(1));
         newCode += beforeGen.gen();
-        newCode += ls;
+        newCode += lineSeparator;
         return newCode;
     }
 
@@ -89,7 +94,7 @@ public class Generator {
         String srcCode = packageStatement(packageName);
         srcCode += importStatement("org.junit.jupiter.api.Test");
         srcCode += importStatement("org.junit.jupiter.api.BeforeEach");
-        srcCode += ls;
+        srcCode += lineSeparator;
         return srcCode;
     }
 
@@ -130,7 +135,7 @@ public class Generator {
     @NotNull
     private String getOutputFilePath(Class clazz) {
         String baseProjectDirectory = project.getBasePath();
-        String localPathToTestFolder = "src" + File.separator + "test" + File.separator + "java";
+        String localPathToTestFolder = outputPath;
         String testFile = clazz.getCanonicalName().replace(".", File.separator) + "Test.java";
         return baseProjectDirectory + File.separator + localPathToTestFolder + File.separator + testFile;
     }
