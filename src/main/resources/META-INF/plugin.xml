@@ -32,19 +32,6 @@
             <add-to-group group-id="testPlugin.Action" anchor="first"/>
         </action>
 
-        <!--SecondAction - Create custom tests-->
-        <action id="createCustomTests.CustomTestsAction" class="createCustomTests.CustomTestsAction"
-                text="Create Custom Test">
-            <add-to-group group-id="testPlugin.Action" anchor="after"
-                          relative-to-action="createAllTests.AllTestsAction"/>
-        </action>
-
-        <!--ThirdAction - Create one test-->
-        <action id="createOneTest.OneTestAction" class="createOneTest.OneTestAction" text="Creat Single Test">
-            <add-to-group group-id="testPlugin.Action" anchor="after"
-                          relative-to-action="createCustomTests.CustomTestsAction"/>
-        </action>
-
         <!--ThirdAction - Plugin settings-->
         <action id="testPlugin.SettingsAction" class="Settings.SettingAction" text="Setting"
                 description="Change path">

@@ -36,18 +36,14 @@ public class AllTestsAction extends AnAction {
 
         SettingsPlugin settings = new SettingsPlugin();
         SettingState settingParameters = settings.getInstance().getState();
-        @SystemIndependent String localClassFolderPath = requireNonNull(settingParameters).getInputPath();
 
-        String absolutePathToClasses = projectBasePath + localClassFolderPath;
+        @SystemIndependent String localInputPath = requireNonNull(settingParameters).getInputPath();
+        String absoluteInputPath = projectBasePath + localInputPath;
 
-        List<Class> classes = getClasses(absolutePathToClasses);
+        @SystemIndependent String outputPath = settingParameters.getOutputPath();
+        String absoluteOutputPath = projectBasePath + outputPath;
 
-        String outputPath = settingParameters.getOutputPath();
-        Generator generator = new Generator(project, outputPath);
-        generator.run(classes,Integer.parseInt(settingParameters.getNumberOfTests()));
-
-        Messages.showMessageDialog(generateAllTestsAction.getProject(), "Test creation completed", "Creator Tests",
-                Messages.getInformationIcon());
+        Generator.generateTests(absoluteInputPath, absoluteOutputPath);
     }
 
     @NotNull

@@ -1,62 +1,64 @@
 package generator;
 
-import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.*;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Stream;
+import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.*;
+import static java.util.stream.Collectors.toList;
 
 public class Generator {
 
-    private Project project;
+    public static String lineSeparator = System.lineSeparator();
 
-    private String outputPath;
-
-    public String lineSeparator = System.lineSeparator();
-
-    public String packageStatement(String packageName) {
-        return "package " + packageName + ";" + lineSeparator + lineSeparator;
+    public static String packageStatement(String packageName) {
+        return "package " + packageName + ";" + System.lineSeparator() + System.lineSeparator();
     }
 
-    public String importStatement(String importClassStr) {
-        return "import " + importClassStr + ";" + lineSeparator;
+    public static String importStatement(String importClassStr) {
+        return "import " + importClassStr + ";" + System.lineSeparator();
     }
 
     public static String generateField(String modifier, String className, String fieldName) {
-        return "\t" + modifier + " " + className + " " + fieldName + ";" + StringGen.ls;
+        return "\t" + modifier + " " + className + " " + fieldName + ";" + System.lineSeparator();
     }
 
-    public Generator(Project project, String outputPath) {
-        this.project = project;
-        this.outputPath = outputPath;
-    }
+    private static String generateTestForClass(Class clazz) {
 
-    private String generateTestForClass(Class clazz, int numberOfTestsPerMethod) {
-
-        String srcCode = getFileHeader(clazz);
+        String srcCode = getTestFileHeader(clazz);
 
         srcCode += getTestHeader(clazz);
 
-        List<String> methodSourceCode = getTestMethods(clazz, numberOfTestsPerMethod);
+        List<String> methodSourceCode = getTestMethods(clazz);
+        srcCode += String.join(System.lineSeparator(), methodSourceCode);
 
-        srcCode += String.join(lineSeparator, methodSourceCode);
-        srcCode += "}" + lineSeparator;
+        srcCode += getTestFooter();
 
         return srcCode;
     }
 
     @NotNull
-    private List<String> getTestMethods(Class clazz, int numberOfTestsPerMethod) {
+    private static String getTestFooter() {
+        return "}" + lineSeparator;
+    }
 
+    @NotNull
+    private static List<String> getTestMethods(Class clazz) {
+
+        int numberOfTestsPerMethod = 5;
         String clazzSimpleName = clazz.getSimpleName();
         String testedClassFieldName = clazzSimpleName.substring(0, 1).toLowerCase() + clazzSimpleName.substring(1);
 
@@ -79,40 +81,26 @@ public class Generator {
     }
 
     @NotNull
-    private String getTestHeader(Class clazz) {
+    private static String getTestHeader(Class clazz) {
         String newCode = "public class " + clazz.getSimpleName() + "Test {" + StringGen.ls;
         newCode += generateField("private", clazz.getSimpleName(), clazz.getSimpleName().substring(0, 1).toLowerCase() + clazz.getSimpleName().substring(1)) + lineSeparator;
         TestBeforeMethodGen beforeGen = new TestBeforeMethodGen(clazz, clazz.getSimpleName().substring(0, 1).toLowerCase() + clazz.getSimpleName().substring(1));
         newCode += beforeGen.gen();
-        newCode += lineSeparator;
+        newCode += System.lineSeparator();
         return newCode;
     }
 
     @NotNull
-    private String getFileHeader(Class clazz) {
+    private static String getTestFileHeader(Class clazz) {
         String packageName = clazz.getCanonicalName().substring(0, clazz.getCanonicalName().lastIndexOf("."));
         String srcCode = packageStatement(packageName);
         srcCode += importStatement("org.junit.jupiter.api.Test");
         srcCode += importStatement("org.junit.jupiter.api.BeforeEach");
-        srcCode += lineSeparator;
+        srcCode += System.lineSeparator();
         return srcCode;
     }
 
-    public void run(List<Class> classList, int numberOfTestsPerMethod) throws IOException {
-
-        List<String> testStrings = classList.stream()
-                .map((Class clazz) -> generateTestForClass(clazz,numberOfTestsPerMethod))
-                .collect(toList());
-
-        List<File> emptyTestFiles = classList.stream()
-                .map(this::getOutputFilePath)
-                .map(File::new)
-                .collect(toList());
-
-        writeTestsToFiles(testStrings, emptyTestFiles);
-    }
-
-    private void writeTestsToFiles(List<String> testStrings, List<File> emptyTestFiles) throws IOException {
+    private static void writeTestsToFiles(List<String> testStrings, List<File> emptyTestFiles) throws IOException {
         if (emptyTestFiles.size() != testStrings.size()){
             throw new IllegalArgumentException("test files list " +
                     "size not equal to the size of the list of test strings");
@@ -132,11 +120,69 @@ public class Generator {
         }
     }
 
+    public static void generateTests(String absoluteInputPath, String absoluteOutputPath) throws IOException, ClassNotFoundException {
+
+        List<Class> classes = getClasses(absoluteInputPath);
+
+        List<String> testStrings = classes.stream()
+                .map(Generator::generateTestForClass)
+                .collect(toList());
+
+        List<File> emptyTestFiles = classes.stream()
+                .map(clazz -> clazz.getCanonicalName().replace(".", File.separator) + "Test.java")
+                .map(filename -> absoluteOutputPath + File.separator + filename)
+                .map(File::new)
+                .collect(toList());
+
+
+        writeTestsToFiles(testStrings, emptyTestFiles);
+
+    }
+
     @NotNull
-    private String getOutputFilePath(Class clazz) {
-        String baseProjectDirectory = project.getBasePath();
-        String localPathToTestFolder = outputPath;
-        String testFile = clazz.getCanonicalName().replace(".", File.separator) + "Test.java";
-        return baseProjectDirectory + File.separator + localPathToTestFolder + File.separator + testFile;
+    private static ClassLoader getClassLoader(String classpath) throws MalformedURLException {
+
+        File classPathFolder = new File(classpath);
+
+        URL url = classPathFolder.toURI().toURL();
+        URL[] urls = new URL[]{url};
+
+        return new URLClassLoader(urls);
+    }
+
+    @NotNull
+    private static List<Class> getClasses(String compiledClassesPath) throws IOException, ClassNotFoundException {
+
+        Path compiledClassesFolder = Paths.get(compiledClassesPath);
+
+        List<String> classNames = Files.walk(compiledClassesFolder)
+                .filter(file -> file.getFileName().toString().endsWith(".class"))
+                .map(Path::toFile)
+                .map(file -> getPackageName(
+                        file.getPath(),
+                        compiledClassesPath,
+                        file.getName()) + file.getName().replace(".class", "")
+                )
+                .collect(Collectors.toList());
+
+        ClassLoader classLoader = getClassLoader(compiledClassesPath);
+
+        List<Class> classes = new ArrayList<>();
+        for (String className : classNames) {
+            classes.add(classLoader.loadClass(className));
+        }
+
+        return classes;
+    }
+
+    private static  String getPackageName(String filePath, String basePath, String className) {
+        String packageName = filePath
+                .replace(basePath, "")
+                .replace(className, "")
+                .replaceFirst("\\/", "")
+                .replaceFirst("\\\\", "")
+                .replaceAll("\\\\", ".")
+                .replaceAll("\\/", ".");
+        return packageName;
     }
 }
