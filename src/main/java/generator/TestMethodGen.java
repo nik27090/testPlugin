@@ -57,11 +57,11 @@ public class TestMethodGen {
         return Util.addTabs(res, 1);
     }
 
-    public String gen(int i) {
+    public String gen() {
         List<String> methodSrcCode = new LinkedList<String>();
         methodSrcCode.add("@Test");
         methodSrcCode.add("@SuppressWarnings({\"rawtypes\", \"unchecked\"})");
-        methodSrcCode.add("public void " + method.getName() + i + "Test() throws Exception {");
+        methodSrcCode.add("public void " + method.getName() + "Test() throws Exception {");
         methodSrcCode.addAll(genMethodInternal());
         methodSrcCode.add("}");
         return String.join(StringGen.ls, Util.addTabs(methodSrcCode, 1)) + StringGen.ls;

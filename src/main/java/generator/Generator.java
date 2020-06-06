@@ -14,7 +14,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -58,26 +57,16 @@ public class Generator {
     @NotNull
     private static List<String> getTestMethods(Class clazz) {
 
-        int numberOfTestsPerMethod = 5;
         String clazzSimpleName = clazz.getSimpleName();
         String testedClassFieldName = clazzSimpleName.substring(0, 1).toLowerCase() + clazzSimpleName.substring(1);
 
-        List<String> methodSrcCodeList = new LinkedList<String>();
+        Method[] declaredMethods = clazz.getDeclaredMethods();
 
-        TestMethodGen methodGen;
-        for (Method m : clazz.getDeclaredMethods()) {
-
-            for (int i = 0; i < numberOfTestsPerMethod; i++) {
-
-                if (!Modifier.isPublic(m.getModifiers())) {
-                    continue;
-                }
-                methodGen = new TestMethodGen(m, testedClassFieldName);
-                String methodSrcCode = methodGen.gen(i);
-                methodSrcCodeList.add(methodSrcCode);
-            }
-        }
-        return methodSrcCodeList;
+        return Arrays.stream(declaredMethods)
+                .filter(method -> !Modifier.isPrivate(method.getModifiers()))
+                .map(method -> new TestMethodGen(method, testedClassFieldName))
+                .map(TestMethodGen::gen)
+                .collect(toList());
     }
 
     @NotNull
@@ -101,12 +90,12 @@ public class Generator {
     }
 
     private static void writeTestsToFiles(List<String> testStrings, List<File> emptyTestFiles) throws IOException {
-        if (emptyTestFiles.size() != testStrings.size()){
+        if (emptyTestFiles.size() != testStrings.size()) {
             throw new IllegalArgumentException("test files list " +
                     "size not equal to the size of the list of test strings");
         }
 
-        int averageListSize = (emptyTestFiles.size() + testStrings.size())/2;
+        int averageListSize = (emptyTestFiles.size() + testStrings.size()) / 2;
 
         for (int i = 0; i < averageListSize; i++) {
             File file = emptyTestFiles.get(i);
@@ -175,7 +164,7 @@ public class Generator {
         return classes;
     }
 
-    private static  String getPackageName(String filePath, String basePath, String className) {
+    private static String getPackageName(String filePath, String basePath, String className) {
         String packageName = filePath
                 .replace(basePath, "")
                 .replace(className, "")
