@@ -1,10 +1,5 @@
 package generator;
 
-import createAllTests.AllTestsAction;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;

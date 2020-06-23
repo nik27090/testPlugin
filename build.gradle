@@ -15,13 +15,22 @@ repositories {
 dependencies {
 
     testCompile group: 'junit', name: 'junit', version: '4.12'
-
     compileOnly 'org.projectlombok:lombok:1.18.4'
     annotationProcessor 'org.projectlombok:lombok:1.18.4'
+    compile group: 'org.reflections', name: 'reflections', version: '0.9.11'
 }
 
 intellij {
     version '2019.3.4'
+}
+
+task fatJar(type: Jar) {
+    manifest {
+        attributes 'Main-Class': 'com.Main'
+    }
+    baseName = project.name + '-all'
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
 }
 
 patchPluginXml {

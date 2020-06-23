@@ -6,6 +6,7 @@ import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 
 /**
  *
@@ -57,11 +58,13 @@ public class TestMethodGen {
         return Util.addTabs(res, 1);
     }
 
+
+
     public String gen() {
         List<String> methodSrcCode = new LinkedList<String>();
         methodSrcCode.add("@Test");
         methodSrcCode.add("@SuppressWarnings({\"rawtypes\", \"unchecked\"})");
-        methodSrcCode.add("public void " + method.getName() + "Test() throws Exception {");
+        methodSrcCode.add("public void " + method.getName() + new Random().nextInt(1000) + "Test() throws Exception {");
         methodSrcCode.addAll(genMethodInternal());
         methodSrcCode.add("}");
         return String.join(StringGen.ls, Util.addTabs(methodSrcCode, 1)) + StringGen.ls;
