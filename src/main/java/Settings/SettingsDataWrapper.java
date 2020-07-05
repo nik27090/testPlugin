@@ -27,9 +27,9 @@ public class SettingsDataWrapper extends DialogWrapper {
 
         PersistentStateComponent<SettingState> state = new SettingsPlugin().getInstance();
         if (state != null) {
-            txtInput.setText(Objects.requireNonNull(state.getState()).inputPath);
+            txtInput.setText(state.getState().inputPath);
             txtOutput.setText(state.getState().outputPath);
-            txtNumberOfTests.setText("1");
+            txtNumberOfTests.setText(state.getState().numberOfTests);
         }
     }
 

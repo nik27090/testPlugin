@@ -32,15 +32,15 @@ public class AllTestsAction extends AnAction {
     public void actionPerformed(AnActionEvent generateAllTestsAction) {
 
         Project project = generateAllTestsAction.getProject();
-        @SystemIndependent String projectBasePath = requireNonNull(project).getBasePath();
+        String projectBasePath = requireNonNull(project).getBasePath();
 
         SettingsPlugin settings = new SettingsPlugin();
         SettingState settingParameters = settings.getInstance().getState();
 
-        @SystemIndependent String localInputPath = requireNonNull(settingParameters).getInputPath();
+        String localInputPath = requireNonNull(settingParameters).getInputPath();
         String absoluteInputPath = projectBasePath + localInputPath;
 
-        @SystemIndependent String outputPath = settingParameters.getOutputPath();
+        String outputPath = settingParameters.getOutputPath();
         String absoluteOutputPath = projectBasePath + outputPath;
 
         Generator.generateTests(absoluteInputPath, absoluteOutputPath);

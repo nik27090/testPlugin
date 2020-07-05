@@ -153,11 +153,10 @@ public class Generator {
 
         List<String> classNames = Files.walk(compiledClassesFolder)
                 .filter(file -> file.getFileName().toString().endsWith(".class"))
-                .map(Path::toFile)
-                .map(file -> getPackageName(
-                        file.getPath(),
-                        compiledClassesPath,
-                        file.getName()) + file.getName().replace(".class", "")
+                .map(path -> getPackageName(
+                        path,
+                        compiledClassesFolder,
+                        path.getFileName().toString()) + path.getFileName().toString().replace(".class", "")
                 )
                 .collect(Collectors.toList());
 
@@ -171,9 +170,9 @@ public class Generator {
         return classes;
     }
 
-    public static String getPackageName(String filePath, String basePath, String className) {
-        String packageName = filePath
-                .replace(basePath, "")
+    public static String getPackageName(Path filePath, Path basePath, String className) {
+        String packageName = filePath.toString()
+                .replace(basePath.toString(), "")
                 .replace(className, "")
                 .replaceFirst("\\/", "")
                 .replaceFirst("\\\\", "")
