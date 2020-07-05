@@ -21,8 +21,6 @@ import static java.util.stream.Collectors.toList;
 
 public class Generator {
 
-    public static String lineSeparator = System.lineSeparator();
-
     public static String packageStatement(String packageName) {
         return "package " + packageName + ";" + System.lineSeparator() + System.lineSeparator();
     }
@@ -51,7 +49,7 @@ public class Generator {
 
     @NotNull
     public static String getTestFooter() {
-        return "}" + lineSeparator;
+        return "}" + StringGen.ls;
     }
 
     @NotNull
@@ -73,7 +71,7 @@ public class Generator {
     public static String getTestHeader(Class clazz) {
         String newCode = "public class " + clazz.getSimpleName() + "Test {" + StringGen.ls;
         newCode += "public " +  clazz.getSimpleName() + "Test(){}" + StringGen.ls;
-        newCode += generateField("public", clazz.getSimpleName(), clazz.getSimpleName().substring(0, 1).toLowerCase() + clazz.getSimpleName().substring(1)) + lineSeparator;
+        newCode += generateField("public", clazz.getSimpleName(), clazz.getSimpleName().substring(0, 1).toLowerCase() + clazz.getSimpleName().substring(1)) + StringGen.ls;
         TestBeforeMethodGen beforeGen = new TestBeforeMethodGen(clazz, clazz.getSimpleName().substring(0, 1).toLowerCase() + clazz.getSimpleName().substring(1));
         newCode += beforeGen.gen();
         newCode += System.lineSeparator();
