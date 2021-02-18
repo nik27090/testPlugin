@@ -30,7 +30,8 @@ public class RunGenerator implements ITestingTool {
     @Override
     public void run(String cName, long timeBudget) throws ClassNotFoundException, IOException {
         Class<?> aClass = classLoader.loadClass(cName);
-        String test = generateTestForClass(aClass);
+        int numberOfTests = 1;
+        String test = generateTestForClass(aClass, numberOfTests);
         String testFileName = getTestFileName(aClass);
         List<String> collect = Arrays.stream(test.split("\n")).collect(toList());
 

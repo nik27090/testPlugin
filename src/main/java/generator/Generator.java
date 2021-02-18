@@ -35,19 +35,14 @@ public class Generator {
         return "\t" + modifier + " " + className + " " + fieldName + ";" + System.lineSeparator();
     }
 
-    public static String generateTestForClass(Class clazz) {
+    public static String generateTestForClass(Class clazz, int numberOfTests) {
 
         String srcCode = getTestFileHeader(clazz);
 
         srcCode += getTestHeader(clazz);
 
-        SettingsPlugin settings = new SettingsPlugin();
-        SettingState settingParameters = settings.getInstance().getState();
+        List<String> methodSourceCode = getTestMethods(clazz, numberOfTests);
 
-        List<String> methodSourceCode = getTestMethods(clazz, Integer.parseInt(settingParameters.getNumberOfTests()));
-
-
-        System.out.println(settingParameters.getNumberOfTests());
         srcCode += String.join(System.lineSeparator(), methodSourceCode);
 
         srcCode += getTestFooter();
@@ -77,14 +72,12 @@ public class Generator {
 
     private static Method[] declaredMethodsForTest(Method[] declaredMethods, int numberOfTests) {
         Method[] methodsForTest = new Method[declaredMethods.length * numberOfTests];
-        int methodForTestIndex = 0;
-        int methodForTestStep = 0;
-        for (Method declaredMethod : declaredMethods) {
-            for (int j = methodForTestStep; j < methodForTestStep + numberOfTests; j++) {
-                methodsForTest[j] = declaredMethod;
-                methodForTestIndex++;
+        int i = 0;
+        for (int j = 0; j < methodsForTest.length; j++) {
+            methodsForTest[j] = declaredMethods[i];
+            if (((j + 1) % numberOfTests) == 0) {
+                ++i;
             }
-            methodForTestStep += methodForTestIndex;
         }
         return methodsForTest;
     }
@@ -135,8 +128,11 @@ public class Generator {
 
         List<Class> classes = getClasses(absoluteInputPath);
 
+        SettingsPlugin settings = new SettingsPlugin();
+        SettingState settingParameters = settings.getInstance().getState();
+
         List<String> testStrings = classes.stream()
-                .map(Generator::generateTestForClass)
+                .map(clazz -> generateTestForClass(clazz, Integer.parseInt(settingParameters.getNumberOfTests())))
                 .collect(toList());
 
         List<File> emptyTestFiles = classes.stream()
