@@ -1,5 +1,7 @@
 package generator;
 
+import Settings.SettingState;
+import Settings.SettingsPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -39,7 +41,13 @@ public class Generator {
 
         srcCode += getTestHeader(clazz);
 
-        List<String> methodSourceCode = getTestMethods(clazz);
+        SettingsPlugin settings = new SettingsPlugin();
+        SettingState settingParameters = settings.getInstance().getState();
+
+        List<String> methodSourceCode = getTestMethods(clazz, Integer.parseInt(settingParameters.getNumberOfTests()));
+
+
+        System.out.println(settingParameters.getNumberOfTests());
         srcCode += String.join(System.lineSeparator(), methodSourceCode);
 
         srcCode += getTestFooter();
@@ -53,18 +61,32 @@ public class Generator {
     }
 
     @NotNull
-    public static List<String> getTestMethods(Class clazz) {
+    public static List<String> getTestMethods(Class clazz, int numberOfTests) {
 
         String clazzSimpleName = clazz.getSimpleName();
         String testedClassFieldName = clazzSimpleName.substring(0, 1).toLowerCase() + clazzSimpleName.substring(1);
 
-        Method[] declaredMethods = clazz.getDeclaredMethods();
+        Method[] declaredMethods = declaredMethodsForTest(clazz.getDeclaredMethods(), numberOfTests);
 
         return Arrays.stream(declaredMethods)
                 .filter(method -> !Modifier.isPrivate(method.getModifiers()))
                 .map(method -> new TestMethodGen(method, testedClassFieldName))
                 .map(TestMethodGen::gen)
                 .collect(toList());
+    }
+
+    private static Method[] declaredMethodsForTest(Method[] declaredMethods, int numberOfTests) {
+        Method[] methodsForTest = new Method[declaredMethods.length * numberOfTests];
+        int methodForTestIndex = 0;
+        int methodForTestStep = 0;
+        for (Method declaredMethod : declaredMethods) {
+            for (int j = methodForTestStep; j < methodForTestStep + numberOfTests; j++) {
+                methodsForTest[j] = declaredMethod;
+                methodForTestIndex++;
+            }
+            methodForTestStep += methodForTestIndex;
+        }
+        return methodsForTest;
     }
 
     @NotNull
