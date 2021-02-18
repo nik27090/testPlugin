@@ -235,3 +235,6 @@ Branch coverage = 0.056338028169014086
 Complexity coverage = 0.06451612903225806
 
 === Run PIT ===
+Copying transcript file transcript.csv to folder results_testgen_10/JSOUP-2_1
+Moving working folders and log files
+Processing of folder results_testgen_10/JSOUP-2_1 has finished
