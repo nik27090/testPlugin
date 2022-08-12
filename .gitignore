@@ -4,4 +4,5 @@
 /build/classes/java/main/
 .DS_STORE
 .idea
+logs
 results_testgen_10
