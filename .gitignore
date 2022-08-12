@@ -1,8 +1,7 @@
 # Project exclude paths
-/.gradle/
-/build/
-/build/classes/java/main/
-.DS_STORE
+.gradle
+build
 .idea
-logs
-results_testgen_10
+execution/*.txt
+execution/temp
+execution/results_testgen_10

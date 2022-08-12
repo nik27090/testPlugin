@@ -1,3 +1,0 @@
-rm -dr results_testgen_10/
-contest_generate_tests.sh testgen 1 1 10
-contest_compute_metrics.sh results_testgen_10 > ./logs/stats_log.txt 2> ./logs/error_log.txt
