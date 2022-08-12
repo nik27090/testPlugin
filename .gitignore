@@ -2,6 +2,7 @@
 .gradle
 build
 .idea
-execution/*.txt
-execution/temp
-execution/results_testgen_10
+*.txt
+*.csv
+temp
+results_testgen_10
