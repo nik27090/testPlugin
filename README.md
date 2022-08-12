@@ -7,7 +7,7 @@ Gradle version - 6.5
 1) run "gradle fatJar"
 2) run "docker container prune"
 3) run "docker run -v /home/path/to/project/name/:/home/name --name testgen -it dockercontainervm/junitcontest:test"
-5) run "cd home/name"
+5) run "cd home/name/execution"
 4) run "./runGeneration"
 
 Статистика в ./stats_log.txt
