@@ -1,9 +1,11 @@
 package generator;
 
+import lombok.SneakyThrows;
+import org.reflections.Reflections;
+
+import java.io.IOException;
 import java.lang.reflect.*;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 /**
  *
@@ -56,7 +58,7 @@ public class ValueGen {
         return "\"" + str + "\"";
     }
 
-    private String genArrayInitializer(Type t) {
+    private String genArrayInitializer(Type t) throws IOException, ClassNotFoundException {
         boolean noBraces = false;
         int elementsCount = Util.rndRange(1, 3);
         Type subtype;
@@ -128,6 +130,7 @@ public class ValueGen {
         return "(" + getTypeName(pt) + ") java.lang.Class.forName(\"" + className + "\")";
     }
 
+    @SneakyThrows
     private String genArrayValue(Type t) {
         if (t instanceof GenericArrayType) {
             int arrayDepth = Util.getArrayDepth(t);
@@ -158,7 +161,8 @@ public class ValueGen {
         return genClassValue(c, false);
     }
 
-    private String genClassValue(Class<?> c, boolean onlyArgs) {
+    @SneakyThrows
+    private String genClassValue(Class c, boolean onlyArgs) {
         if (c.isInterface()) {
             return "null /*interface cannot be instantiated*/";
         }

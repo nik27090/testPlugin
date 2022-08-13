@@ -1,0 +1,6 @@
+JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+
+TOOL=build/libs/testPlugin-all-1.0-SNAPSHOT.jar
+
+export JAVA_HOME=$JAVA_HOME
+$JAVA_HOME/bin/java -cp $TOOL com.Main

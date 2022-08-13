@@ -1,4 +1,8 @@
 # Project exclude paths
-/.gradle/
-/build/
-/build/classes/java/main/
+.gradle
+build
+.idea
+*.txt
+*.csv
+temp
+results_testgen_10
