@@ -27,7 +27,7 @@ public class SettingsDataWrapper extends DialogWrapper {
 
         PersistentStateComponent<SettingState> state = new SettingsPlugin().getInstance();
         if (state != null) {
-            txtInput.setText(Objects.requireNonNull(state.getState()).inputPath);
+            txtInput.setText(state.getState().inputPath);
             txtOutput.setText(state.getState().outputPath);
             txtNumberOfTests.setText(state.getState().numberOfTests);
         }
@@ -59,15 +59,16 @@ public class SettingsDataWrapper extends DialogWrapper {
     protected void doOKAction() {
         String inputText = txtInput.getText();
         String outputText = txtOutput.getText();
-        String numTests = txtNumberOfTests.getText();
+        String numberOfTests = txtNumberOfTests.getText();
         System.out.println(inputText);
         System.out.println(outputText);
-        System.out.println(numTests);
+        System.out.println(numberOfTests);
 
         PersistentStateComponent<SettingState> state = new SettingsPlugin().getInstance();
-        Objects.requireNonNull(state.getState()).inputPath = inputText;
-        state.getState().outputPath = outputText;
-        state.getState().numberOfTests = numTests;
+
+        state.getState().setInputPath(inputText);
+        state.getState().setOutputPath(outputText);
+        state.getState().setNumberOfTests(numberOfTests);
 
         close(OK_EXIT_CODE);
     }

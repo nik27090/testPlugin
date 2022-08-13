@@ -1,12 +1,12 @@
 package generator;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.util.LinkedList;
 import java.util.List;
-
-import static javafx.scene.input.KeyCode.T;
+import java.util.Random;
 
 /**
  *
@@ -40,11 +40,11 @@ public class TestMethodGen {
         List<String> res = new LinkedList<String>();
 
         res.add(StringGen.comment("Setup"));
-        int parCnt = method.getParameterCount();
+        Parameter[] parameters = method.getParameters();
         List<String> arguments = new LinkedList<String>();
-        for (int i = 0; i < parCnt; i++) {
+        for (int i = 0; i < parameters.length; i++) {
             Type parType = method.getGenericParameterTypes()[i];
-            String argName = "arg" + i;
+            String argName = parameters[i].getName();
             ValueGen g = new ValueGen(parType, typeParameters, typeValues);
             res.add(genSetStatement(parType, argName, g.generate()));
             arguments.add(argName);
@@ -58,11 +58,13 @@ public class TestMethodGen {
         return Util.addTabs(res, 1);
     }
 
+
+
     public String gen() {
         List<String> methodSrcCode = new LinkedList<String>();
         methodSrcCode.add("@Test");
         methodSrcCode.add("@SuppressWarnings({\"rawtypes\", \"unchecked\"})");
-        methodSrcCode.add("public void " + method.getName() + "Test() throws Exception {");
+        methodSrcCode.add("public void " + method.getName() + new Random().nextInt(1000) + "Test() throws Exception {");
         methodSrcCode.addAll(genMethodInternal());
         methodSrcCode.add("}");
         return String.join(StringGen.ls, Util.addTabs(methodSrcCode, 1)) + StringGen.ls;
