@@ -1,7 +1,6 @@
-package generator;
+package com.generator.internal;
 
 import lombok.SneakyThrows;
-import org.reflections.Reflections;
 
 import java.io.IOException;
 import java.lang.reflect.*;

@@ -1,4 +1,4 @@
-package generator;
+package com.generator.internal;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -63,9 +63,9 @@ public class TestMethodGen {
     public String gen() {
         List<String> methodSrcCode = new LinkedList<String>();
         methodSrcCode.add("@Test");
-        methodSrcCode.add("@SuppressWarnings({\"rawtypes\", \"unchecked\"})");
-        methodSrcCode.add("public void " + method.getName() + new Random().nextInt(1000) + "Test() throws Exception {");
-        methodSrcCode.addAll(genMethodInternal());
+//        methodSrcCode.add("@SuppressWarnings({\"rawtypes\", \"unchecked\"})");
+        methodSrcCode.add("public void " + method.getName() + "Test() throws Exception {");
+//        methodSrcCode.addAll(genMethodInternal());
         methodSrcCode.add("}");
         return String.join(StringGen.ls, Util.addTabs(methodSrcCode, 1)) + StringGen.ls;
     }

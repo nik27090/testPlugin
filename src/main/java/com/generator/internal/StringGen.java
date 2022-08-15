@@ -1,4 +1,4 @@
-package generator;
+package com.generator.internal;
 
 import java.util.List;
 

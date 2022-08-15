@@ -1,7 +1,11 @@
-package generator;
+package com.generator;
 
-import Settings.SettingState;
-import Settings.SettingsPlugin;
+import com.settings.SettingState;
+import com.settings.SettingsPlugin;
+import com.generator.internal.StringGen;
+import com.generator.internal.TestBeforeMethodGen;
+import com.generator.internal.TestMethodGen;
+import com.squareup.javapoet.TypeSpec;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -16,6 +20,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,6 +41,8 @@ public class Generator {
     }
 
     public static String generateTestForClass(Class clazz, int numberOfTests) {
+
+        TypeSpec.classBuilder(clazz.getSimpleName() + "Test");
 
         String srcCode = getTestFileHeader(clazz);
 
@@ -61,7 +68,9 @@ public class Generator {
         String clazzSimpleName = clazz.getSimpleName();
         String testedClassFieldName = clazzSimpleName.substring(0, 1).toLowerCase() + clazzSimpleName.substring(1);
 
-        Method[] declaredMethods = declaredMethodsForTest(clazz.getDeclaredMethods(), numberOfTests);
+        Method[] declaredMethods = Arrays.stream(clazz.getDeclaredMethods())
+                .sorted(Comparator.comparing(Method::getName))
+                .toArray(Method[]::new);
 
         return Arrays.stream(declaredMethods)
                 .filter(method -> !Modifier.isPrivate(method.getModifiers()))
@@ -85,7 +94,7 @@ public class Generator {
     @NotNull
     public static String getTestHeader(Class clazz) {
         String newCode = "public class " + clazz.getSimpleName() + "Test {" + StringGen.ls;
-        newCode += "public " +  clazz.getSimpleName() + "Test(){}" + StringGen.ls;
+        newCode += "public " + clazz.getSimpleName() + "Test(){}" + StringGen.ls;
         newCode += generateField("public", clazz.getSimpleName(), clazz.getSimpleName().substring(0, 1).toLowerCase() + clazz.getSimpleName().substring(1)) + StringGen.ls;
         TestBeforeMethodGen beforeGen = new TestBeforeMethodGen(clazz, clazz.getSimpleName().substring(0, 1).toLowerCase() + clazz.getSimpleName().substring(1));
         newCode += beforeGen.gen();
@@ -124,26 +133,25 @@ public class Generator {
         }
     }
 
-    public static void generateTests(String absoluteInputPath, String absoluteOutputPath) throws IOException, ClassNotFoundException {
+    public static void generateTests(String classPath, String testDirectory) throws IOException, ClassNotFoundException {
 
-        List<Class> classes = getClasses(absoluteInputPath);
+        List<Class> classes = getClasses(classPath);
 
         SettingsPlugin settings = new SettingsPlugin();
         SettingState settingParameters = settings.getInstance().getState();
 
-        List<String> testStrings = classes.stream()
+        List<String> testStubs = classes.stream()
                 .map(clazz -> generateTestForClass(clazz, Integer.parseInt(settingParameters.getNumberOfTests())))
                 .collect(toList());
 
         List<File> emptyTestFiles = classes.stream()
                 .map(Generator::getTestFileName)
-                .map(filename -> absoluteOutputPath + File.separator + filename)
+                .map(filename -> testDirectory + File.separator + filename)
                 .map(File::new)
                 .collect(toList());
 
 
-        writeTestsToFiles(testStrings, emptyTestFiles);
-
+        writeTestsToFiles(testStubs, emptyTestFiles);
     }
 
     @NotNull

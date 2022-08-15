@@ -5,7 +5,7 @@
     <version>1.0-SNAPSHOT</version>
 
     <description><![CDATA[
-    Unit test generator, based on the fuzzing paradigm
+    Unit test com.generator, based on the fuzzing paradigm
     ]]></description>
 
     <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
@@ -14,7 +14,7 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <!-- Add your extensions here -->
-        <applicationService serviceImplementation="Settings.SettingsPlugin"/>
+        <applicationService serviceImplementation="com.settings.SettingsPlugin"/>
     </extensions>
 
     <!--All of the actions, performed by this plugin-->
@@ -27,13 +27,13 @@
         </group>
 
         <!--FirstAction - Create tests for all compiled classes-->
-        <action id="createAllTests.AllTestsAction" class="createAllTests.AllTestsAction" text="Create Tests"
+        <action id="com.actions.AllTestsAction" class="com.actions.AllTestsAction" text="Create Tests"
                 description="Create tests for all .class files">
             <add-to-group group-id="testPlugin.Action" anchor="first"/>
         </action>
 
         <!--ThirdAction - Plugin settings-->
-        <action id="testPlugin.SettingsAction" class="Settings.SettingAction" text="Setting"
+        <action id="testPlugin.SettingsAction" class="com.settings.SettingAction" text="Setting"
                 description="Change path">
             <add-to-group group-id="testPlugin.Action" anchor="last"/>
         </action>

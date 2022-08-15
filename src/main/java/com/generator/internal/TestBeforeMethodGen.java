@@ -1,4 +1,4 @@
-package generator;
+package com.generator.internal;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -25,7 +25,7 @@ public class TestBeforeMethodGen {
     public String gen() {
         List<String> methodSrcCode = new LinkedList<String>();
         methodSrcCode.add("@Before");
-        methodSrcCode.add("@SuppressWarnings({\"rawtypes\", \"unchecked\"})");
+//        methodSrcCode.add("@SuppressWarnings({\"rawtypes\", \"unchecked\"})");
         methodSrcCode.add("public void beforeEach() throws Exception {");
         methodSrcCode.addAll(genBeforeMethodInternal());
         methodSrcCode.add("}");

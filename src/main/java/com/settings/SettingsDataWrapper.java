@@ -1,4 +1,4 @@
-package Settings;
+package com.settings;
 
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.ui.DialogWrapper;
@@ -11,7 +11,6 @@ import com.intellij.util.ui.UIUtil;
 import javax.annotation.Nullable;
 import javax.swing.*;
 import java.awt.*;
-import java.util.Objects;
 
 public class SettingsDataWrapper extends DialogWrapper {
 
@@ -23,7 +22,7 @@ public class SettingsDataWrapper extends DialogWrapper {
     protected SettingsDataWrapper(boolean canBeParent) {
         super(canBeParent);
         init();
-        setTitle("TestPlugin Settings");
+        setTitle("TestPlugin com.Settings");
 
         PersistentStateComponent<SettingState> state = new SettingsPlugin().getInstance();
         if (state != null) {
