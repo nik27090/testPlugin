@@ -1,0 +1,34 @@
+package com.testdata;
+
+import org.junit.Test;
+import org.junit.Before;
+
+public class TestDataGeneratorTest {
+public TestDataGeneratorTest(){}
+	public TestDataGenerator testDataGenerator;
+
+	@Before
+	public void beforeEach() throws Exception {
+		testDataGenerator = new com.testdata.TestDataGenerator();
+	}
+
+	@Test
+	public void getRandomArrayTest() throws Exception {
+	}
+
+	@Test
+	public void getRandomListTest() throws Exception {
+	}
+
+	@Test
+	public void getTestObjectTest() throws Exception {
+	}
+
+	@Test
+	public void isPrimitiveTest() throws Exception {
+	}
+
+	@Test
+	public void setFieldTest() throws Exception {
+	}
+}
