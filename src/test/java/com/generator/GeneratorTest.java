@@ -17,7 +17,7 @@ class GeneratorTest {
 
         String testForClass = Generator.generateTestForClass(testDataGenerator, 1);
 
-        String expectedTestClass = new String(readAllBytes(get("./src/test/resources/TestDataGeneratorTest.txt")), UTF_8);
+        String expectedTestClass = new String(readAllBytes(get("./src/main/resources/TestDataGeneratorTest.txt")), UTF_8);
 
         assertThat(testForClass).isEqualTo(expectedTestClass);
     }
