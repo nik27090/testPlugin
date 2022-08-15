@@ -17,16 +17,16 @@ public class Util {
     public static List<String> addTabs(List<String> src, int count) {
         List<String> res = new LinkedList<>();
         for (String line : src) {
-            String tabs = "";
+            StringBuilder tabs = new StringBuilder();
             for (int i = 0; i < count; i++) {
-                tabs += "\t";
+                tabs.append("\t");
             }
             res.add(tabs + line);
         }
         return res;
     }
 
-    public static int findType(TypeVariable[] typeVariables, TypeVariable findThis) {
+    public static int findType(TypeVariable<?>[] typeVariables, TypeVariable<?> findThis) {
         String typeName = findThis.getName();
         for (int i = 0; i < typeVariables.length; i++) {
             if (typeVariables[i].getName().equals(typeName)) {
@@ -36,7 +36,7 @@ public class Util {
         return -1;
     }
 
-    public static String getTypeName(Type t, TypeVariable[] typeVariables, Type[] typeValues) {
+    public static String getTypeName(Type t, TypeVariable<?>[] typeVariables, Type[] typeValues) {
         String res = t.getTypeName();
         if (typeVariables != null && typeValues != null
             && typeVariables.length > 0 && typeValues.length == typeVariables.length) {
@@ -80,10 +80,10 @@ public class Util {
     }
 
     public static String repeat(String str, int count) {
-        String res = "";
+        StringBuilder res = new StringBuilder();
         for (int i = 0; i < count; i++) {
-            res += str;
+            res.append(str);
         }
-        return res;
+        return res.toString();
     }
 }

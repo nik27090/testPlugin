@@ -20,7 +20,7 @@ public class TestBeforeMethodGen {
     }
 
     public String gen() {
-        List<String> methodSrcCode = new LinkedList<String>();
+        List<String> methodSrcCode = new LinkedList<>();
         methodSrcCode.add("@Before");
         methodSrcCode.add("public void beforeEach() throws Exception {");
         methodSrcCode.addAll(genBeforeMethodInternal());

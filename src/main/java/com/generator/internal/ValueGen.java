@@ -6,9 +6,6 @@ import java.io.IOException;
 import java.lang.reflect.*;
 import java.util.*;
 
-/**
- *
- */
 public class ValueGen {
     private final static Random rnd = new Random();
 
@@ -26,49 +23,65 @@ public class ValueGen {
     private String genPrimitive(Class<?> c) {
         String dataType = getTypeName(c);
         String res = null;
-        if (dataType.equals("boolean") || dataType.equals("java.lang.Boolean")) {
-            res = rnd.nextInt(2) == 1 ? "true" : "false";
-        } else if (dataType.equals("byte") || dataType.equals("java.lang.Byte")) {
-            res = String.valueOf((byte)rnd.nextInt());
-        } else if (dataType.equals("char") || dataType.equals("java.lang.Character")) {
-            char rndChar = (char)(rnd.nextInt(127 - 32) + 32);
-            res = "'" + rndChar + "'";
-        } else if (dataType.equals("double") || dataType.equals("java.lang.Double")) {
-            res = String.valueOf(rnd.nextDouble());
-        } else if (dataType.equals("float") || dataType.equals("java.lang.Float")) {
-            res = String.valueOf((float)rnd.nextDouble());
-        } else if (dataType.equals("int") || dataType.equals("java.lang.Integer")) {
-            res = String.valueOf(rnd.nextInt());
-        } else if (dataType.equals("long") || dataType.equals("java.lang.Long")) {
-            res = rnd.nextLong() + "L";
-        } else if (dataType.equals("short") || dataType.equals("java.lang.Short")) {
-            res = String.valueOf((short) rnd.nextInt());
+        switch (dataType) {
+            case "boolean":
+            case "java.lang.Boolean":
+                res = rnd.nextInt(2) == 1 ? "true" : "false";
+                break;
+            case "byte":
+            case "java.lang.Byte":
+                res = String.valueOf((byte) rnd.nextInt());
+                break;
+            case "char":
+            case "java.lang.Character":
+                char rndChar = (char) (rnd.nextInt(127 - 32) + 32);
+                res = "'" + rndChar + "'";
+                break;
+            case "double":
+            case "java.lang.Double":
+                res = String.valueOf(rnd.nextDouble());
+                break;
+            case "float":
+            case "java.lang.Float":
+                res = String.valueOf((float) rnd.nextDouble());
+                break;
+            case "int":
+            case "java.lang.Integer":
+                res = String.valueOf(rnd.nextInt());
+                break;
+            case "long":
+            case "java.lang.Long":
+                res = rnd.nextLong() + "L";
+                break;
+            case "short":
+            case "java.lang.Short":
+                res = String.valueOf((short) rnd.nextInt());
+                break;
         }
         return res;
     }
 
     private String genString() {
         int len = Util.rndRange(1, 4);
-        String str = "";
+        StringBuilder str = new StringBuilder();
         for (int i = 0; i < len; i++) {
             char rndChar = (char)(rnd.nextInt(123-97) + 97);
-            str += rndChar;
+            str.append(rndChar);
         }
         return "\"" + str + "\"";
     }
 
-    private String genArrayInitializer(Type t) throws IOException, ClassNotFoundException {
-        boolean noBraces = false;
+    private String genArrayInitializer(Type type) {
         int elementsCount = Util.rndRange(1, 3);
         Type subtype;
-        if (t instanceof GenericArrayType) {
-            // e.g. t is "List<String>[][]" or "List<String>[]"
-            GenericArrayType gat = (GenericArrayType) t;
+        if (type instanceof GenericArrayType) {
+            // e.g. type is "List<String>[][]" or "List<String>[]"
+            GenericArrayType gat = (GenericArrayType) type;
             // e.g. subtype is "List<String>[]" or "List<String>" respectively
             subtype = gat.getGenericComponentType();
         } else {
-            // e.g. t is "String[][]" or "int[]"
-            Class<?> c = (Class<?>) t;
+            // e.g. type is "String[][]" or "int[]"
+            Class<?> c = (Class<?>) type;
             // e.g. subtype is "String[]" or "int"
             subtype = c.getComponentType();
         }
@@ -77,9 +90,6 @@ public class ValueGen {
             values.add(genValue(subtype));
         }
         String result = String.join(", ", values);
-        if (noBraces) {
-            return result;
-        }
         return "{ " + result + " }";
     }
 
@@ -102,7 +112,6 @@ public class ValueGen {
         return listType;
     }
 
-    // "Class<String>, Type"
     private boolean isType(ParameterizedType pt) {
         Type baseType = pt.getRawType();
         if (baseType == null) {
@@ -113,7 +122,6 @@ public class ValueGen {
                 || baseTypeName.equals("java.lang.Class");
     }
 
-    // "Class<String>, Type"
     private String genValueForType(ParameterizedType pt) {
         Type baseType = pt.getRawType();
         if (baseType == null) {
@@ -147,10 +155,10 @@ public class ValueGen {
 
     private Constructor<?> getPublicConstructor(Class<?> c) {
         Constructor<?>[] constructorArray = c.getConstructors();
-        for (int i = 0; i < constructorArray.length; i++) {
-            int modifiers = constructorArray[i].getModifiers();
+        for (Constructor<?> constructor : constructorArray) {
+            int modifiers = constructor.getModifiers();
             if (Modifier.isPublic(modifiers)) {
-                return constructorArray[i];
+                return constructor;
             }
         }
         return null;
@@ -161,14 +169,14 @@ public class ValueGen {
     }
 
     @SneakyThrows
-    private String genClassValue(Class c, boolean onlyArgs) {
+    private String genClassValue(Class<?> c, boolean onlyArgs) {
         if (c.isInterface()) {
             return "null /*interface cannot be instantiated*/";
         }
         if (Modifier.isAbstract(c.getModifiers())) {
             return "null /*abstract classes cannot be instantiated*/";
         }
-        List<String> arguments = new LinkedList<String>();
+        List<String> arguments = new LinkedList<>();
         Constructor<?> ctor = getPublicConstructor(c);
         if (ctor == null) {
             return "null /*no public constructor available*/";
@@ -188,23 +196,22 @@ public class ValueGen {
         return "new " + getTypeName(c) + "(" + String.join(", ", arguments) + ")";
     }
 
-    private boolean isPrimitive(Class<?> c) {
-        return c.isPrimitive() ||
-                c.getTypeName().equals("java.lang.Short") ||
-                c.getTypeName().equals("java.lang.Boolean") ||
-                c.getTypeName().equals("java.lang.Byte") ||
-                c.getTypeName().equals("java.lang.Character") ||
-                c.getTypeName().equals("java.lang.Double") ||
-                c.getTypeName().equals("java.lang.Float") ||
-                c.getTypeName().equals("java.lang.Integer") ||
-                c.getTypeName().equals("java.lang.Long") ||
-                c.getTypeName().equals("java.lang.Short");
+    private boolean isPrimitive(Class<?> clazz) {
+        return clazz.isPrimitive() ||
+                clazz.getTypeName().equals("java.lang.Short") ||
+                clazz.getTypeName().equals("java.lang.Boolean") ||
+                clazz.getTypeName().equals("java.lang.Byte") ||
+                clazz.getTypeName().equals("java.lang.Character") ||
+                clazz.getTypeName().equals("java.lang.Double") ||
+                clazz.getTypeName().equals("java.lang.Float") ||
+                clazz.getTypeName().equals("java.lang.Integer") ||
+                clazz.getTypeName().equals("java.lang.Long");
     }
 
     private String genValue(Type t) {
-        if (t instanceof TypeVariable) {
+        if (t instanceof TypeVariable<?>) {
             // e.g. T for: "<T> void foo(List<T> some) {}"
-            TypeVariable tv = (TypeVariable) t;
+            TypeVariable<?> tv = (TypeVariable<?>) t;
             int typeIndex = Util.findType(methodTypeParameters, tv);
             return genValue(methodTypeValues[typeIndex]);
         } else if (t instanceof ParameterizedType) {
@@ -214,7 +221,7 @@ public class ValueGen {
             if (listType != null) {
                 Type childType = pt.getActualTypeArguments()[0];
                 int elemCnt = Util.rndRange(1, 3);
-                List<String> valueList = new LinkedList<String>();
+                List<String> valueList = new LinkedList<>();
                 for (int i = 0; i < elemCnt; i++) {
                     valueList.add("add(" + genValue(childType) + ");");
                 }

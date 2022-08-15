@@ -126,10 +126,4 @@ public class SBSTChannel
 	{
 		emit(file.getAbsolutePath());
 	}
-
-	public String readLine() throws IOException
-	{
-		return input.readLine();
-	}
-
 }

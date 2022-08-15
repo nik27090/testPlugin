@@ -7,16 +7,15 @@ import java.lang.reflect.TypeVariable;
  *
  */
 public class TypeChooser {
-    private static Type chooseType(TypeVariable typeVariable) {
+    private static Type chooseType(TypeVariable<?> typeVariable) {
         Type[] bounds = typeVariable.getBounds();
-        if (bounds.length <= 0) {
+        if (bounds.length == 0) {
             return null;
         }
-        Type bound = bounds[0];
-        return bound;
+        return bounds[0];
     }
 
-    public static Type[] chooseTypeParameterValues(TypeVariable[] typeParameters) {
+    public static Type[] chooseTypeParameterValues(TypeVariable<?>[] typeParameters) {
         Type[] typeValues = new Type[typeParameters.length];
         for (int i = 0; i < typeParameters.length; i++) {
             typeValues[i] = chooseType(typeParameters[i]);
