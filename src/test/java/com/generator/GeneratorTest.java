@@ -16,7 +16,7 @@ class GeneratorTest {
     void generate() throws ClassNotFoundException, IOException {
         Class<?> testDataGenerator = ClassLoader.getSystemClassLoader().loadClass("com.testdata.TestDataGenerator");
 
-        String testForClass = Generator.generateTestForClass(testDataGenerator);
+        String testForClass = Generator.generateTestForClass(testDataGenerator, 1);
 
         String expectedTes = IOUtils.resourceToString("TestDataGeneratorTest.txt",
                 StandardCharsets.UTF_8, ClassLoader.getSystemClassLoader());
