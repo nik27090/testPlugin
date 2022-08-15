@@ -5,8 +5,6 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -21,9 +19,6 @@ class GeneratorTest {
         String expectedTes = IOUtils.resourceToString("TestDataGeneratorTest.txt",
                 StandardCharsets.UTF_8, ClassLoader.getSystemClassLoader());
 
-        if (!expectedTes.equals(testForClass)) {
-            System.out.println("Wtf");
-        }
         assertThat(testForClass).isEqualTo(expectedTes);
     }
 }
