@@ -1,0 +1,42 @@
+<idea-plugin>
+    <id>org.example.testPlugin</id>
+    <name>UnitTestGeneratorPlugin</name>
+    <vendor email="support@email.com" url="http://www.website.com">Vendor</vendor>
+    <version>1.0-SNAPSHOT</version>
+
+    <description><![CDATA[
+    Unit test com.generator, based on the fuzzing paradigm
+    ]]></description>
+
+    <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
+         on how to target different products -->
+    <depends>com.intellij.modules.platform</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- Add your extensions here -->
+        <applicationService serviceImplementation="com.settings.SettingsPlugin"/>
+    </extensions>
+
+    <!--All of the actions, performed by this plugin-->
+    <actions>
+        <!-- Add your actions here -->
+
+        <!--Plugin menu-->
+        <group id="testPlugin.Action" text="TestPlugin" description="About my plugin">
+            <add-to-group group-id="MainMenu" anchor="last"/>
+        </group>
+
+        <!--FirstAction - Create tests for all compiled classes-->
+        <action id="com.actions.AllTestsAction" class="com.actions.AllTestsAction" text="Create Tests"
+                description="Create tests for all .class files">
+            <add-to-group group-id="testPlugin.Action" anchor="first"/>
+        </action>
+
+        <!--ThirdAction - Plugin settings-->
+        <action id="testPlugin.SettingsAction" class="com.settings.SettingAction" text="Setting"
+                description="Change path">
+            <add-to-group group-id="testPlugin.Action" anchor="last"/>
+        </action>
+    </actions>
+</idea-plugin>
+

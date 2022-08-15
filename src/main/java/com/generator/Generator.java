@@ -20,6 +20,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,7 +40,7 @@ public class Generator {
         return "\t" + modifier + " " + className + " " + fieldName + ";" + System.lineSeparator();
     }
 
-    public static String generateTestForClass(Class clazz, int numberOfTests) {
+    public static String generateTestForClass(Class clazz) {
 
         TypeSpec.classBuilder(clazz.getSimpleName() + "Test");
 
@@ -47,7 +48,7 @@ public class Generator {
 
         srcCode += getTestHeader(clazz);
 
-        List<String> methodSourceCode = getTestMethods(clazz, numberOfTests);
+        List<String> methodSourceCode = getTestMethods(clazz);
 
         srcCode += String.join(System.lineSeparator(), methodSourceCode);
 
@@ -62,12 +63,14 @@ public class Generator {
     }
 
     @NotNull
-    public static List<String> getTestMethods(Class clazz, int numberOfTests) {
+    public static List<String> getTestMethods(Class clazz) {
 
         String clazzSimpleName = clazz.getSimpleName();
         String testedClassFieldName = clazzSimpleName.substring(0, 1).toLowerCase() + clazzSimpleName.substring(1);
 
-        Method[] declaredMethods = declaredMethodsForTest(clazz.getDeclaredMethods(), numberOfTests);
+        Method[] declaredMethods = Arrays.stream(clazz.getDeclaredMethods())
+                .sorted(Comparator.comparing(Method::getName))
+                .toArray(Method[]::new);
 
         return Arrays.stream(declaredMethods)
                 .filter(method -> !Modifier.isPrivate(method.getModifiers()))
@@ -76,22 +79,10 @@ public class Generator {
                 .collect(toList());
     }
 
-    private static Method[] declaredMethodsForTest(Method[] declaredMethods, int numberOfTests) {
-        Method[] methodsForTest = new Method[declaredMethods.length * numberOfTests];
-        int i = 0;
-        for (int j = 0; j < methodsForTest.length; j++) {
-            methodsForTest[j] = declaredMethods[i];
-            if (((j + 1) % numberOfTests) == 0) {
-                ++i;
-            }
-        }
-        return methodsForTest;
-    }
-
     @NotNull
     public static String getTestHeader(Class clazz) {
         String newCode = "public class " + clazz.getSimpleName() + "Test {" + StringGen.ls;
-        newCode += "public " +  clazz.getSimpleName() + "Test(){}" + StringGen.ls;
+        newCode += "public " + clazz.getSimpleName() + "Test(){}" + StringGen.ls;
         newCode += generateField("public", clazz.getSimpleName(), clazz.getSimpleName().substring(0, 1).toLowerCase() + clazz.getSimpleName().substring(1)) + StringGen.ls;
         TestBeforeMethodGen beforeGen = new TestBeforeMethodGen(clazz, clazz.getSimpleName().substring(0, 1).toLowerCase() + clazz.getSimpleName().substring(1));
         newCode += beforeGen.gen();
@@ -134,11 +125,8 @@ public class Generator {
 
         List<Class> classes = getClasses(classPath);
 
-        SettingsPlugin settings = new SettingsPlugin();
-        SettingState settingParameters = settings.getInstance().getState();
-
         List<String> testStubs = classes.stream()
-                .map(clazz -> generateTestForClass(clazz, Integer.parseInt(settingParameters.getNumberOfTests())))
+                .map(Generator::generateTestForClass)
                 .collect(toList());
 
         List<File> emptyTestFiles = classes.stream()
