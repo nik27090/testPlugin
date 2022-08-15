@@ -21,8 +21,6 @@ class GeneratorTest {
         String expectedTes = IOUtils.resourceToString("TestDataGeneratorTest.txt",
                 StandardCharsets.UTF_8, ClassLoader.getSystemClassLoader());
 
-        Files.write(Paths.get("test.txt"), expectedTes.getBytes(StandardCharsets.UTF_8));
-
         if (!expectedTes.equals(testForClass)) {
             System.out.println("Wtf");
         }
