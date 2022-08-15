@@ -1,4 +1,4 @@
-package Settings;
+package com.settings;
 
 
 public class SettingState {

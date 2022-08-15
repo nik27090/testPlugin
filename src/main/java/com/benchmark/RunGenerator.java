@@ -1,4 +1,6 @@
-package generator;
+package com.benchmark;
+
+import com.generator.Generator;
 
 import java.io.File;
 import java.io.IOException;
@@ -9,7 +11,7 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 
-import static generator.Generator.*;
+import static com.generator.Generator.*;
 import static java.util.stream.Collectors.toList;
 
 public class RunGenerator implements ITestingTool {

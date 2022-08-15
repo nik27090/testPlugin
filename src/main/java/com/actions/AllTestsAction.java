@@ -1,15 +1,13 @@
-package createAllTests;
+package com.actions;
 
-import Settings.SettingState;
-import Settings.SettingsPlugin;
+import com.settings.SettingState;
+import com.settings.SettingsPlugin;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.Messages;
-import generator.Generator;
+import com.generator.Generator;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.SystemIndependent;
 
 import java.io.File;
 import java.io.IOException;

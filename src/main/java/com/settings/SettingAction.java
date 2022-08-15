@@ -1,4 +1,4 @@
-package Settings;
+package com.settings;
 
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -11,7 +11,7 @@ public class SettingAction extends AnAction {
         if (e.getProject() != null) {
             SettingsDataWrapper dataWrapper = new SettingsDataWrapper(true);
             if (dataWrapper.showAndGet()) {
-                Messages.showMessageDialog(e.getProject(), "Settings have been saved", "Settings",
+                Messages.showMessageDialog(e.getProject(), "com.Settings have been saved", "Settings",
                         Messages.getInformationIcon());
             }
         }

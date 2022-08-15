@@ -1,4 +1,4 @@
-# unit-test-generator
+# unit-test-com.generator
 
 Gradle version - 6.5
 
