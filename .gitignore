@@ -2,7 +2,7 @@
 .gradle
 build
 .idea
-*.txt
+*log.txt
 *.csv
 temp
 results_testgen_10
