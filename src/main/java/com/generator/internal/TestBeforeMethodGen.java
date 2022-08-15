@@ -3,21 +3,18 @@ package com.generator.internal;
 import java.util.LinkedList;
 import java.util.List;
 
-/**
- *
- */
 public class TestBeforeMethodGen {
-    private Class<?> c;
-    private String fieldName;
+    private final Class<?> clazz;
+    private final String fieldName;
 
-    public TestBeforeMethodGen(Class<?> c, String fieldName) {
-        this.c = c;
+    public TestBeforeMethodGen(Class<?> clazz, String fieldName) {
+        this.clazz = clazz;
         this.fieldName = fieldName;
     }
 
     private List<String> genBeforeMethodInternal()  {
-        List<String> res = new LinkedList<String>();
-        ValueGen g = new ValueGen(c, null, null);
+        List<String> res = new LinkedList<>();
+        ValueGen g = new ValueGen(clazz, null, null);
         res.add(StringGen.assignment(fieldName, g.generate()));
         return Util.addTabs(res, 1);
     }
@@ -25,7 +22,6 @@ public class TestBeforeMethodGen {
     public String gen() {
         List<String> methodSrcCode = new LinkedList<String>();
         methodSrcCode.add("@Before");
-//        methodSrcCode.add("@SuppressWarnings({\"rawtypes\", \"unchecked\"})");
         methodSrcCode.add("public void beforeEach() throws Exception {");
         methodSrcCode.addAll(genBeforeMethodInternal());
         methodSrcCode.add("}");

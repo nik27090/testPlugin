@@ -21,8 +21,8 @@ import java.io.Writer;
 
 public class SBSTChannel
 {
-	private PrintWriter output;
-	private BufferedReader input;
+	private final PrintWriter output;
+	private final BufferedReader input;
 
 	public SBSTChannel(Reader input, Writer output)
 	{

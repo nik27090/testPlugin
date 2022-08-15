@@ -15,7 +15,7 @@ public class Util {
     private static final Random rnd = new Random();
 
     public static List<String> addTabs(List<String> src, int count) {
-        List<String> res = new LinkedList<String>();
+        List<String> res = new LinkedList<>();
         for (String line : src) {
             String tabs = "";
             for (int i = 0; i < count; i++) {

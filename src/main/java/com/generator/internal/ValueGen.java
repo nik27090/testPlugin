@@ -12,9 +12,9 @@ import java.util.*;
 public class ValueGen {
     private final static Random rnd = new Random();
 
-    private Type type;
-    private TypeVariable<Method>[] methodTypeParameters;
-    private Type[] methodTypeValues;
+    private final Type type;
+    private final TypeVariable<Method>[] methodTypeParameters;
+    private final Type[] methodTypeValues;
 
     public ValueGen(Type type, TypeVariable<Method>[] methodTypeParameters,
                     Type[] methodTypeValues) {
@@ -40,7 +40,7 @@ public class ValueGen {
         } else if (dataType.equals("int") || dataType.equals("java.lang.Integer")) {
             res = String.valueOf(rnd.nextInt());
         } else if (dataType.equals("long") || dataType.equals("java.lang.Long")) {
-            res = String.valueOf(rnd.nextLong()) + "L";
+            res = rnd.nextLong() + "L";
         } else if (dataType.equals("short") || dataType.equals("java.lang.Short")) {
             res = String.valueOf((short) rnd.nextInt());
         }

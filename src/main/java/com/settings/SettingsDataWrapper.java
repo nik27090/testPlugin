@@ -14,10 +14,10 @@ import java.awt.*;
 
 public class SettingsDataWrapper extends DialogWrapper {
 
-    private JPanel panel = new JPanel(new GridBagLayout());
-    private JTextField txtInput = new JTextField();
-    private JTextField txtOutput = new JTextField();
-    private JTextField txtNumberOfTests = new JTextField();
+    private final JPanel panel = new JPanel(new GridBagLayout());
+    private final JTextField txtInput = new JTextField();
+    private final JTextField txtOutput = new JTextField();
+    private final JTextField txtNumberOfTests = new JTextField();
 
     protected SettingsDataWrapper(boolean canBeParent) {
         super(canBeParent);
