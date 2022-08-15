@@ -4,8 +4,9 @@ import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.util.Objects.requireNonNull;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class GeneratorTest {
@@ -16,9 +17,9 @@ class GeneratorTest {
 
         String testForClass = Generator.generateTestForClass(testDataGenerator, 1);
 
-        String expectedTes = IOUtils.resourceToString("TestDataGeneratorTest.txt",
-                StandardCharsets.UTF_8, ClassLoader.getSystemClassLoader());
+        String expectedTestClass = IOUtils.toString(requireNonNull(ClassLoader.getSystemClassLoader()
+                .getResourceAsStream("TestDataGeneratorTest.txt")), UTF_8);
 
-        assertThat(testForClass).isEqualTo(expectedTes);
+        assertThat(testForClass).isEqualTo(expectedTestClass);
     }
 }
