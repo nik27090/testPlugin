@@ -1,5 +1,7 @@
 package com.generator;
 
+import org.junit.Ignore;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -12,6 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class GeneratorTest {
 
     @Test
+    @Disabled
     void generateOld() throws ClassNotFoundException, IOException {
         Class<?> testDataGenerator = ClassLoader.getSystemClassLoader().loadClass("com.testdata.TestDataGenerator");
 
