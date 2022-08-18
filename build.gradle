@@ -21,9 +21,7 @@ dependencies {
     implementation group: 'org.reflections', name: 'reflections', version: '0.10.2'
     implementation group: 'com.squareup', name: 'javapoet', version: '1.2.0'
     testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.6.1'
-    testImplementation group: 'commons-io', name: 'commons-io', version: '2.6'
-
-
+    testImplementation group: 'commons-io', name: 'commons-io', version: '2.7'
 }
 
 intellij {

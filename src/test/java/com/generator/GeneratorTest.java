@@ -12,7 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class GeneratorTest {
 
     @Test
-    void generate() throws ClassNotFoundException, IOException {
+    void generateOld() throws ClassNotFoundException, IOException {
         Class<?> testDataGenerator = ClassLoader.getSystemClassLoader().loadClass("com.testdata.TestDataGenerator");
 
         String testForClass = Generator.generateTestForClass(testDataGenerator, 1);
@@ -20,5 +20,16 @@ class GeneratorTest {
         String expectedTestClass = new String(readAllBytes(get("./src/test/resources/TestDataGeneratorTest.txt")), UTF_8);
 
         assertThat(testForClass).isEqualTo(expectedTestClass);
+    }
+
+    @Test
+    void generateNew() throws ClassNotFoundException, IOException, NoSuchMethodException {
+        Class<?> testDataGenerator = ClassLoader.getSystemClassLoader().loadClass("com.testdata.TestDataGenerator");
+
+        String testForClass = Generator.generateTestForClass(testDataGenerator);
+
+        String expectedTes = new String(readAllBytes(get("./src/test/resources/TestDataGeneratorTest.txt")), UTF_8);
+
+        assertThat(testForClass).isEqualTo(expectedTes);
     }
 }

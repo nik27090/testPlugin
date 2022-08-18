@@ -5,8 +5,12 @@ import com.generator.internal.TestBeforeMethodGen;
 import com.generator.internal.TestMethodGen;
 import com.settings.SettingState;
 import com.settings.SettingsPlugin;
+import com.squareup.javapoet.*;
 import org.jetbrains.annotations.NotNull;
+import org.junit.Before;
+import org.junit.Test;
 
+import javax.lang.model.type.TypeMirror;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -21,8 +25,11 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.squareup.javapoet.TypeName.*;
 import static java.util.Objects.*;
 import static java.util.stream.Collectors.toList;
+import static javax.lang.model.element.Modifier.PRIVATE;
+import static javax.lang.model.element.Modifier.PUBLIC;
 
 public class Generator {
 
@@ -51,6 +58,56 @@ public class Generator {
         srcCode += getTestFooter();
 
         return srcCode;
+    }
+
+    public static String generateTestForClass(Class<?> clazz) {
+
+        String simpleName = clazz.getSimpleName();
+        String firstLowerCaseLetter = String.valueOf(simpleName.charAt(0)).toLowerCase();
+
+        String fieldName = firstLowerCaseLetter + simpleName.substring(1);
+
+        TypeSpec.Builder builder = TypeSpec.classBuilder(clazz.getSimpleName() + "Test")
+                .addModifiers(PUBLIC)
+                .addField(FieldSpec.builder(clazz, fieldName)
+                        .addModifiers(PRIVATE)
+                        .build())
+                .addMethod(MethodSpec.methodBuilder("beforeEach")
+                        .addAnnotation(Before.class)
+                        .addModifiers(PUBLIC)
+                        .returns(VOID)
+                        .addException(Exception.class)
+                        .addCode(CodeBlock.builder()
+                                .add(CodeBlock.builder()
+                                        .addStatement("$N = new $T()", fieldName, clazz)
+                                        .build())
+                                .build())
+                        .build());
+
+        Method[] declaredMethods = Arrays.stream(clazz.getDeclaredMethods())
+                .sorted(Comparator.comparing(Method::getName))
+                .toArray(Method[]::new);
+
+        List<MethodSpec> methodSpecs = Arrays.stream(declaredMethods)
+                .filter(method -> !Modifier.isPrivate(method.getModifiers()))
+                .map(method -> MethodSpec.methodBuilder(method.getName() + "Test")
+                        .addModifiers(PUBLIC)
+                        .addAnnotation(Test.class)
+                        .returns(VOID)
+                        .addException(Exception.class)
+                        .build())
+                .collect(toList());
+
+        TypeSpec typeSpec = builder
+                .addMethods(methodSpecs)
+                .build();
+
+        String canonicalName = clazz.getCanonicalName();
+        String packageName = canonicalName.substring(0, canonicalName.lastIndexOf("."));
+        JavaFile javaFile = JavaFile.builder(packageName, typeSpec)
+                .build();
+
+        return javaFile.toString();
     }
 
     @NotNull
