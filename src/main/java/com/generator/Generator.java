@@ -4,6 +4,8 @@ import com.generator.internal.StringGen;
 import com.generator.internal.TestBeforeMethodGen;
 import com.generator.internal.TestMethodGen;
 import com.generator.internal.ValueGen;
+import com.settings.SettingState;
+import com.settings.SettingsPlugin;
 import com.squareup.javapoet.*;
 import org.jeasy.random.EasyRandom;
 import org.jetbrains.annotations.NotNull;
@@ -249,11 +251,11 @@ public class Generator {
 
         List<Class<?>> classes = getClasses(classPath);
 
-//        SettingsPlugin settings = new SettingsPlugin();
-//        SettingState settingParameters = settings.getInstance().getState();
+        SettingsPlugin settings = new SettingsPlugin();
+        SettingState settingParameters = settings.getInstance().getState();
 
         List<String> testStubs = classes.stream()
-                .map(clazz -> generateTestForClass(clazz, 1))
+                .map(clazz -> generateTestForClass(clazz, Integer.parseInt(settingParameters.getNumberOfTests())))
                 .collect(toList());
 
         List<File> emptyTestFiles = classes.stream()
