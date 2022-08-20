@@ -15,7 +15,7 @@ import java.util.stream.Stream;
 
 public class TestDataGenerator {
 
-    public Field setField(Object o, Field f) throws IllegalAccessException, NoSuchMethodException, InstantiationException, InvocationTargetException {
+    private Field setField(Object o, Field f) throws IllegalAccessException, NoSuchMethodException, InstantiationException, InvocationTargetException {
 
         f.setAccessible(true);
 

@@ -3,15 +3,12 @@ package com.generator;
 import com.generator.internal.StringGen;
 import com.generator.internal.TestBeforeMethodGen;
 import com.generator.internal.TestMethodGen;
-import com.settings.SettingState;
-import com.settings.SettingsPlugin;
 import com.squareup.javapoet.*;
 import org.jeasy.random.EasyRandom;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Before;
 import org.junit.Test;
 
-import javax.lang.model.type.TypeMirror;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -22,17 +19,21 @@ import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.squareup.javapoet.TypeName.*;
-import static java.util.Objects.*;
+import static com.squareup.javapoet.TypeName.VOID;
 import static java.util.stream.Collectors.toList;
 import static javax.lang.model.element.Modifier.PRIVATE;
 import static javax.lang.model.element.Modifier.PUBLIC;
 
 public class Generator {
+
+    private static final EasyRandom EASY_RANDOM = new EasyRandom();
 
     public static String packageStatement(String packageName) {
         return "package " + packageName + ";" + System.lineSeparator() + System.lineSeparator();
@@ -74,11 +75,11 @@ public class Generator {
                 .addModifiers(PUBLIC)
                 .addFields(Arrays.asList(
                         FieldSpec.builder(EasyRandom.class, randomGeneratorFieldName)
-                        .addModifiers(PRIVATE)
-                        .build(),
+                                .addModifiers(PRIVATE)
+                                .build(),
                         FieldSpec.builder(clazz, fieldName)
-                        .addModifiers(PRIVATE)
-                        .build()))
+                                .addModifiers(PRIVATE)
+                                .build()))
                 .addMethod(MethodSpec.methodBuilder("beforeEach")
                         .addAnnotation(Before.class)
                         .addModifiers(PUBLIC)
@@ -88,9 +89,7 @@ public class Generator {
                                 .addStatement("$N = new $T()", randomGeneratorFieldName, EasyRandom.class)
                                 .build())
                         .addCode(CodeBlock.builder()
-                                .add(CodeBlock.builder()
-                                        .addStatement("$N = $N.$N($T.class)", fieldName, randomGeneratorFieldName, "nextObject", clazz)
-                                        .build())
+                                .addStatement("$N = $N.$N($T.class)", fieldName, randomGeneratorFieldName, "nextObject", clazz)
                                 .build())
                         .build());
 
@@ -105,9 +104,7 @@ public class Generator {
                         .addAnnotation(AnnotationSpec.builder(Test.class)
                                 .addMember("value", CodeBlock.builder().add("$L = $L", "timeout", 1000).build())
                                 .build())
-                        .addCode(CodeBlock.builder()
-                                .addStatement("$N.$N()", fieldName, method.getName())
-                                .build())
+                        .addCode(getMethodBody(fieldName, method, randomGeneratorFieldName))
                         .returns(VOID)
                         .addException(Exception.class)
                         .build())
@@ -123,6 +120,63 @@ public class Generator {
                 .build();
 
         return javaFile.toString();
+    }
+
+    @NotNull
+    private static CodeBlock getMethodBody(String fieldName, Method method, String randomGeneratorFieldName) {
+        StringBuilder template = new StringBuilder("$N.$N(");
+
+        List<Object> params = new ArrayList<>();
+
+        params.add(fieldName);
+        params.add(method.getName());
+
+        Class<?>[] parameterTypes = method.getParameterTypes();
+        for (int i = 0; i < parameterTypes.length; i++) {
+            if (parameterTypes[i].toString().contains("boolean") || parameterTypes[i].toString().contains("java.lang.Boolean")) {
+                template.append("$L");
+                params.add(EASY_RANDOM.nextBoolean());
+            } else if (parameterTypes[i].toString().contains("byte") || parameterTypes[i].toString().contains("java.lang.Byte")) {
+                template.append("$L");
+                params.add(EASY_RANDOM.nextObject(Byte.class));
+            } else if (parameterTypes[i].toString().contains("char") || parameterTypes[i].toString().contains("java.lang.Character")) {
+                template.append("$L");
+                params.add(EASY_RANDOM.nextObject(Character.class));
+            } else if (parameterTypes[i].toString().contains("double") || parameterTypes[i].toString().contains("java.lang.Double")) {
+                template.append("$L");
+                params.add(EASY_RANDOM.nextDouble());
+            } else if (parameterTypes[i].toString().contains("float") || parameterTypes[i].toString().contains("java.lang.Float")) {
+                template.append("$L");
+                params.add(EASY_RANDOM.nextFloat());
+            } else if (parameterTypes[i].toString().contains("int") || parameterTypes[i].toString().contains("java.lang.Integer")) {
+                template.append("$L");
+                params.add(EASY_RANDOM.nextInt());
+            } else if (parameterTypes[i].toString().contains("long") || parameterTypes[i].toString().contains("java.lang.Long")) {
+                template.append("$L");
+                params.add(EASY_RANDOM.nextLong());
+            } else if (parameterTypes[i].toString().contains("short") || parameterTypes[i].toString().contains("java.lang.Short")) {
+                template.append("$L");
+                params.add(EASY_RANDOM.nextObject(Short.class));
+            } else if (parameterTypes[i].toString().contains("java.lang.String")) {
+                template.append("$L");
+                params.add(String.valueOf(EASY_RANDOM.nextInt()));
+            } else if (parameterTypes[i].toString().contains("java.lang.Object")) {
+                template.append("new $T()");
+                params.add(Object.class);
+            } else if (parameterTypes[i].toString().contains("java.lang.Class")) {
+                template.append("$T.class");
+                params.add(Object.class);
+            }
+            if (i != parameterTypes.length - 1) {
+                template.append(", ");
+            }
+        }
+
+        template.append(')');
+
+        return CodeBlock.builder()
+                .addStatement(template.toString(), params.toArray())
+                .build();
     }
 
     @NotNull
