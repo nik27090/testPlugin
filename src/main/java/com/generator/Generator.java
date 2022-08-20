@@ -65,8 +65,6 @@ public class Generator {
 
         String fieldName = firstLowerCaseLetter + simpleName.substring(1);
 
-        String randomGeneratorFieldName = "randomGenerator";
-
         TypeSpec.Builder builder = TypeSpec.classBuilder(clazz.getSimpleName() + "Test")
                 .addModifiers(PUBLIC)
                 .addFields(Collections.singletonList(
@@ -79,7 +77,7 @@ public class Generator {
                         .returns(VOID)
                         .addException(Exception.class)
                         .addCode(CodeBlock.builder()
-                                .addStatement("$N = $N.$N($T.class)", fieldName, randomGeneratorFieldName, "nextObject", clazz)
+                                .addStatement("$N = new $T()", fieldName, "nextObject", clazz)
                                 .build())
                         .build());
 
@@ -94,7 +92,7 @@ public class Generator {
                         .addAnnotation(AnnotationSpec.builder(Test.class)
                                 .addMember("value", CodeBlock.builder().add("$L = $L", "timeout", 1000).build())
                                 .build())
-                        .addCode(getMethodBody(fieldName, method, randomGeneratorFieldName))
+                        .addCode(getMethodBody(fieldName, method))
                         .returns(VOID)
                         .addException(Exception.class)
                         .build())
@@ -113,13 +111,14 @@ public class Generator {
     }
 
     @NotNull
-    private static CodeBlock getMethodBody(String fieldName, Method method, String randomGeneratorFieldName) {
+    private static CodeBlock getMethodBody(String fieldName, Method method) {
         StringBuilder template = new StringBuilder("$N.$N(");
 
         List<Object> params = new ArrayList<>();
 
         params.add(fieldName);
         params.add(method.getName());
+        //TODO: continue to create method generation logic
 
         template.append(')');
 
