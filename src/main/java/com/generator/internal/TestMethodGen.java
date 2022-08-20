@@ -34,11 +34,11 @@ public class TestMethodGen {
 
     private List<String> genMethodInternal() {
         Type retType = method.getGenericReturnType();
-        List<String> res = new LinkedList<String>();
+        List<String> res = new LinkedList<>();
 
         res.add(StringGen.comment("Setup"));
         Parameter[] parameters = method.getParameters();
-        List<String> arguments = new LinkedList<String>();
+        List<String> arguments = new LinkedList<>();
         for (int i = 0; i < parameters.length; i++) {
             Type parType = method.getGenericParameterTypes()[i];
             String argName = parameters[i].getName();

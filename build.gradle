@@ -22,7 +22,6 @@ dependencies {
     implementation group: 'com.squareup', name: 'javapoet', version: '1.2.0'
     testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.6.1'
     testImplementation group: 'commons-io', name: 'commons-io', version: '2.7'
-    implementation 'org.jeasy:easy-random-core:5.0.0'
 
 }
 

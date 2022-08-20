@@ -3,11 +3,9 @@ package com.generator;
 import com.generator.internal.StringGen;
 import com.generator.internal.TestBeforeMethodGen;
 import com.generator.internal.TestMethodGen;
-import com.generator.internal.ValueGen;
 import com.settings.SettingState;
 import com.settings.SettingsPlugin;
 import com.squareup.javapoet.*;
-import org.jeasy.random.EasyRandom;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,10 +20,7 @@ import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -35,8 +30,6 @@ import static javax.lang.model.element.Modifier.PRIVATE;
 import static javax.lang.model.element.Modifier.PUBLIC;
 
 public class Generator {
-
-    private static final EasyRandom EASY_RANDOM = new EasyRandom();
 
     public static String packageStatement(String packageName) {
         return "package " + packageName + ";" + System.lineSeparator() + System.lineSeparator();
@@ -76,10 +69,7 @@ public class Generator {
 
         TypeSpec.Builder builder = TypeSpec.classBuilder(clazz.getSimpleName() + "Test")
                 .addModifiers(PUBLIC)
-                .addFields(Arrays.asList(
-                        FieldSpec.builder(EasyRandom.class, randomGeneratorFieldName)
-                                .addModifiers(PRIVATE)
-                                .build(),
+                .addFields(Collections.singletonList(
                         FieldSpec.builder(clazz, fieldName)
                                 .addModifiers(PRIVATE)
                                 .build()))
@@ -88,9 +78,6 @@ public class Generator {
                         .addModifiers(PUBLIC)
                         .returns(VOID)
                         .addException(Exception.class)
-                        .addCode(CodeBlock.builder()
-                                .addStatement("$N = new $T()", randomGeneratorFieldName, EasyRandom.class)
-                                .build())
                         .addCode(CodeBlock.builder()
                                 .addStatement("$N = $N.$N($T.class)", fieldName, randomGeneratorFieldName, "nextObject", clazz)
                                 .build())
@@ -133,47 +120,6 @@ public class Generator {
 
         params.add(fieldName);
         params.add(method.getName());
-
-        Class<?>[] parameterTypes = method.getParameterTypes();
-        for (int i = 0; i < parameterTypes.length; i++) {
-            if (parameterTypes[i].toString().contains("boolean") || parameterTypes[i].toString().contains("java.lang.Boolean")) {
-                template.append("$L");
-                params.add(EASY_RANDOM.nextBoolean());
-            } else if (parameterTypes[i].toString().contains("byte") || parameterTypes[i].toString().contains("java.lang.Byte")) {
-                template.append("$L");
-                params.add(EASY_RANDOM.nextObject(Byte.class));
-            } else if (parameterTypes[i].toString().contains("char") || parameterTypes[i].toString().contains("java.lang.Character")) {
-                template.append("$L");
-                params.add(EASY_RANDOM.nextObject(Character.class));
-            } else if (parameterTypes[i].toString().contains("double") || parameterTypes[i].toString().contains("java.lang.Double")) {
-                template.append("$L");
-                params.add(EASY_RANDOM.nextDouble());
-            } else if (parameterTypes[i].toString().contains("float") || parameterTypes[i].toString().contains("java.lang.Float")) {
-                template.append("$L");
-                params.add(EASY_RANDOM.nextFloat());
-            } else if (parameterTypes[i].toString().contains("int") || parameterTypes[i].toString().contains("java.lang.Integer")) {
-                template.append("$L");
-                params.add(EASY_RANDOM.nextInt());
-            } else if (parameterTypes[i].toString().contains("long") || parameterTypes[i].toString().contains("java.lang.Long")) {
-                template.append("$L");
-                params.add(EASY_RANDOM.nextLong());
-            } else if (parameterTypes[i].toString().contains("short") || parameterTypes[i].toString().contains("java.lang.Short")) {
-                template.append("$L");
-                params.add(EASY_RANDOM.nextObject(Short.class));
-            } else if (parameterTypes[i].toString().contains("java.lang.String")) {
-                template.append("$L");
-                params.add(String.valueOf(EASY_RANDOM.nextInt()));
-            } else if (parameterTypes[i].toString().contains("java.lang.Object")) {
-                template.append("new $T()");
-                params.add(Object.class);
-            } else if (parameterTypes[i].toString().contains("java.lang.Class")) {
-                template.append("$T.class");
-                params.add(Object.class);
-            }
-            if (i != parameterTypes.length - 1) {
-                template.append(", ");
-            }
-        }
 
         template.append(')');
 
@@ -255,7 +201,7 @@ public class Generator {
         SettingState settingParameters = settings.getInstance().getState();
 
         List<String> testStubs = classes.stream()
-                .map(clazz -> generateTestForClass(clazz, Integer.parseInt(settingParameters.getNumberOfTests())))
+                .map(clazz -> generateTestForClass(clazz))
                 .collect(toList());
 
         List<File> emptyTestFiles = classes.stream()
