@@ -6,6 +6,7 @@ import com.generator.internal.TestMethodGen;
 import com.settings.SettingState;
 import com.settings.SettingsPlugin;
 import com.squareup.javapoet.*;
+import org.jeasy.random.EasyRandom;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Before;
 import org.junit.Test;
@@ -67,19 +68,28 @@ public class Generator {
 
         String fieldName = firstLowerCaseLetter + simpleName.substring(1);
 
+        String randomGeneratorFieldName = "randomGenerator";
+
         TypeSpec.Builder builder = TypeSpec.classBuilder(clazz.getSimpleName() + "Test")
                 .addModifiers(PUBLIC)
-                .addField(FieldSpec.builder(clazz, fieldName)
+                .addFields(Arrays.asList(
+                        FieldSpec.builder(EasyRandom.class, randomGeneratorFieldName)
                         .addModifiers(PRIVATE)
-                        .build())
+                        .build(),
+                        FieldSpec.builder(clazz, fieldName)
+                        .addModifiers(PRIVATE)
+                        .build()))
                 .addMethod(MethodSpec.methodBuilder("beforeEach")
                         .addAnnotation(Before.class)
                         .addModifiers(PUBLIC)
                         .returns(VOID)
                         .addException(Exception.class)
                         .addCode(CodeBlock.builder()
+                                .addStatement("$N = new $T()", randomGeneratorFieldName, EasyRandom.class)
+                                .build())
+                        .addCode(CodeBlock.builder()
                                 .add(CodeBlock.builder()
-                                        .addStatement("$N = new $T()", fieldName, clazz)
+                                        .addStatement("$N = $N.$N($T.class)", fieldName, randomGeneratorFieldName, "nextObject", clazz)
                                         .build())
                                 .build())
                         .build());
@@ -219,7 +229,7 @@ public class Generator {
         Path compiledClassesFolder = Paths.get(compiledClassesPath);
 
         List<String> classNames;
-        try (Stream<Path> walk = Files.walk(compiledClassesFolder)){
+        try (Stream<Path> walk = Files.walk(compiledClassesFolder)) {
             classNames = walk
                     .filter(file -> file.getFileName().toString().endsWith(".class"))
                     .map(path -> getPackageName(

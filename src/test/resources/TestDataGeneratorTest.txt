@@ -6,12 +6,14 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class TestDataGeneratorTest {
-  private TestDataGenerator testDataGenerator;
   private EasyRandom randomGenerator;
+
+  private TestDataGenerator testDataGenerator;
 
   @Before
   public void beforeEach() throws Exception {
-    testDataGenerator = new TestDataGenerator();
+    randomGenerator = new EasyRandom();
+    testDataGenerator = randomGenerator.nextObject(TestDataGenerator.class);
   }
 
   @Test(timeout = 1000)
