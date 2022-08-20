@@ -3,6 +3,7 @@ package com.generator;
 import com.generator.internal.StringGen;
 import com.generator.internal.TestBeforeMethodGen;
 import com.generator.internal.TestMethodGen;
+import com.generator.internal.ValueGen;
 import com.squareup.javapoet.*;
 import org.jeasy.random.EasyRandom;
 import org.jetbrains.annotations.NotNull;
@@ -187,13 +188,17 @@ public class Generator {
     @NotNull
     public static List<String> getTestMethods(Class<?> clazz, int numberOfTests) {
 
+        String clazzSimpleName = clazz.getSimpleName();
+        String testedClassFieldName = clazzSimpleName.substring(0, 1).toLowerCase() + clazzSimpleName.substring(1);
+
+
         Method[] declaredMethods = Arrays.stream(clazz.getDeclaredMethods())
                 .sorted(Comparator.comparing(Method::getName))
                 .toArray(Method[]::new);
 
         return Arrays.stream(declaredMethods)
                 .filter(method -> !Modifier.isPrivate(method.getModifiers()))
-                .map(TestMethodGen::new)
+                .map((Method method1) -> new TestMethodGen(method1, testedClassFieldName))
                 .map(TestMethodGen::gen)
                 .collect(toList());
     }
@@ -248,7 +253,7 @@ public class Generator {
 //        SettingState settingParameters = settings.getInstance().getState();
 
         List<String> testStubs = classes.stream()
-                .map(Generator::generateTestForClass)
+                .map(clazz -> generateTestForClass(clazz, 1))
                 .collect(toList());
 
         List<File> emptyTestFiles = classes.stream()

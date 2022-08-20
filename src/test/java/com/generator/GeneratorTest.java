@@ -26,7 +26,6 @@ class GeneratorTest {
     }
 
     @Test
-    @Disabled
     void generateNew() throws ClassNotFoundException, IOException {
         Class<?> testDataGenerator = ClassLoader.getSystemClassLoader().loadClass("com.testdata.TestDataGenerator");
 
