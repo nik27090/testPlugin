@@ -3,7 +3,7 @@ package com.settings;
 
 public class SettingState {
     public String inputPath = "/target/classes";
-    public String outputPath = "/src/test/test";
+    public String outputPath = "/src/test/java";
     public String numberOfTests = "5";
 
     public String getNumberOfTests() { return numberOfTests; }

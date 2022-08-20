@@ -1,34 +1,41 @@
 package com.testdata;
 
 import java.lang.Exception;
+import org.jeasy.random.EasyRandom;
 import org.junit.Before;
 import org.junit.Test;
 
 public class TestDataGeneratorTest {
   private TestDataGenerator testDataGenerator;
+  private EasyRandom randomGenerator;
 
   @Before
   public void beforeEach() throws Exception {
     testDataGenerator = new TestDataGenerator();
   }
 
-  @Test
+  @Test(timeout = 1000)
   public void getRandomArrayTest() throws Exception {
+    testDataGenerator.getRandomArray();
   }
 
-  @Test
+  @Test(timeout = 1000)
   public void getRandomListTest() throws Exception {
+    testDataGenerator.getRandomList();
   }
 
-  @Test
+  @Test(timeout = 1000)
   public void getTestObjectTest() throws Exception {
+    testDataGenerator.getTestObject();
   }
 
-  @Test
+  @Test(timeout = 1000)
   public void isPrimitiveTest() throws Exception {
+    testDataGenerator.isPrimitive();
   }
 
-  @Test
+  @Test(timeout = 1000)
   public void setFieldTest() throws Exception {
+    testDataGenerator.setField();
   }
 }

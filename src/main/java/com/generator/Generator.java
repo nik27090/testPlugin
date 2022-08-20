@@ -92,7 +92,12 @@ public class Generator {
                 .filter(method -> !Modifier.isPrivate(method.getModifiers()))
                 .map(method -> MethodSpec.methodBuilder(method.getName() + "Test")
                         .addModifiers(PUBLIC)
-                        .addAnnotation(Test.class)
+                        .addAnnotation(AnnotationSpec.builder(Test.class)
+                                .addMember("value", CodeBlock.builder().add("$L = $L", "timeout", 1000).build())
+                                .build())
+                        .addCode(CodeBlock.builder()
+                                .addStatement("$N.$N()", fieldName, method.getName())
+                                .build())
                         .returns(VOID)
                         .addException(Exception.class)
                         .build())
@@ -175,11 +180,11 @@ public class Generator {
 
         List<Class<?>> classes = getClasses(classPath);
 
-        SettingsPlugin settings = new SettingsPlugin();
-        SettingState settingParameters = settings.getInstance().getState();
+//        SettingsPlugin settings = new SettingsPlugin();
+//        SettingState settingParameters = settings.getInstance().getState();
 
         List<String> testStubs = classes.stream()
-                .map(clazz -> generateTestForClass(clazz, Integer.parseInt(requireNonNull(settingParameters).getNumberOfTests())))
+                .map(Generator::generateTestForClass)
                 .collect(toList());
 
         List<File> emptyTestFiles = classes.stream()
