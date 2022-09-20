@@ -40,7 +40,7 @@ public class Generator {
     }
 
     public static String generateField(String modifier, String className, String fieldName) {
-        return "\t" + modifier + " " + className + " " + fieldName + ";" + System.lineSeparator();
+        return modifier + " " + className + " " + fieldName + ";" + System.lineSeparator();
     }
 
     public static String generateTestForClass(Class<?> clazz, int numberOfTests) {
@@ -200,7 +200,7 @@ public class Generator {
         SettingState settingParameters = settings.getInstance().getState();
 
         List<String> testStubs = classes.stream()
-                .map(clazz -> generateTestForClass(clazz))
+                .map(clazz -> generateTestForClass(clazz, 1))
                 .collect(toList());
 
         List<File> emptyTestFiles = classes.stream()
