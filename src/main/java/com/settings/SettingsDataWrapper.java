@@ -1,4 +1,4 @@
-package Settings;
+package com.settings;
 
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.ui.DialogWrapper;
@@ -13,21 +13,25 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.Objects;
 
+import static java.util.Objects.*;
+
 public class SettingsDataWrapper extends DialogWrapper {
 
-    private JPanel panel = new JPanel(new GridBagLayout());
-    private JTextField txtInput = new JTextField();
-    private JTextField txtOutput = new JTextField();
+    private final JPanel panel = new JPanel(new GridBagLayout());
+    private final JTextField txtInput = new JTextField();
+    private final JTextField txtOutput = new JTextField();
+    private final JTextField txtNumberOfTests = new JTextField();
 
     protected SettingsDataWrapper(boolean canBeParent) {
         super(canBeParent);
         init();
-        setTitle("TestPlugin Settings");
+        setTitle("TestPlugin Com.Settings");
 
         PersistentStateComponent<SettingState> state = new SettingsPlugin().getInstance();
         if (state != null) {
-            txtInput.setText(Objects.requireNonNull(state.getState()).inputPath);
+            txtInput.setText(requireNonNull(state.getState()).inputPath);
             txtOutput.setText(state.getState().outputPath);
+            txtNumberOfTests.setText(state.getState().numberOfTests);
         }
     }
 
@@ -47,6 +51,9 @@ public class SettingsDataWrapper extends DialogWrapper {
         panel.add(label("Output repository path:"), gb.nextLine().next().weightx(0.2));
         panel.add(txtOutput, gb.next().weightx(0.8));
 
+        panel.add(label("Number of tests"), gb.nextLine().next().weightx(0.2));
+        panel.add(txtNumberOfTests, gb.next().weightx(0.8));
+
         return panel;
     }
 
@@ -54,12 +61,16 @@ public class SettingsDataWrapper extends DialogWrapper {
     protected void doOKAction() {
         String inputText = txtInput.getText();
         String outputText = txtOutput.getText();
+        String numberOfTests = txtNumberOfTests.getText();
         System.out.println(inputText);
         System.out.println(outputText);
+        System.out.println(numberOfTests);
 
         PersistentStateComponent<SettingState> state = new SettingsPlugin().getInstance();
-        Objects.requireNonNull(state.getState()).inputPath = inputText;
-        state.getState().outputPath = outputText;
+
+        requireNonNull(state.getState()).setInputPath(inputText);
+        state.getState().setOutputPath(outputText);
+        state.getState().setNumberOfTests(numberOfTests);
 
         close(OK_EXIT_CODE);
     }

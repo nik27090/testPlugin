@@ -1,4 +1,4 @@
-package Settings;
+package com.settings;
 
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.ServiceManager;
@@ -29,5 +29,4 @@ public class SettingsPlugin implements PersistentStateComponent<SettingState> {
     public PersistentStateComponent<SettingState> getInstance() {
         return ServiceManager.getService(SettingsPlugin.class);
     }
-
 }

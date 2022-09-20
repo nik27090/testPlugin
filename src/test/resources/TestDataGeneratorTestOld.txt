@@ -1,0 +1,56 @@
+package com.testdata;
+
+import org.junit.Test;
+import org.junit.Before;
+
+public class TestDataGeneratorTest {
+public TestDataGeneratorTest(){}
+public TestDataGenerator testDataGenerator;
+
+	@Before
+	public void beforeEach() throws Exception {
+		testDataGenerator = new com.testdata.TestDataGenerator();
+	}
+
+	@Test
+	@SuppressWarnings({"rawtypes", "unchecked"})
+	public void getRandomArrayTest() throws Exception {
+		// Setup
+		java.lang.Class<java.lang.Object> arg0 = (java.lang.Class<java.lang.Object>) java.lang.Class.forName("java.lang.Object");
+		int arg1 = -2046792169;
+
+		// Run the test
+		java.lang.Object[] res = testDataGenerator.getRandomArray(arg0, arg1);
+	}
+
+	@Test
+	@SuppressWarnings({"rawtypes", "unchecked"})
+	public void getRandomListTest() throws Exception {
+		// Setup
+		java.lang.Class<java.lang.Object> arg0 = (java.lang.Class<java.lang.Object>) java.lang.Class.forName("java.lang.Object");
+		int arg1 = 1441764799;
+
+		// Run the test
+		java.util.ArrayList<java.lang.Object> res = testDataGenerator.getRandomList(arg0, arg1);
+	}
+
+	@Test
+	@SuppressWarnings({"rawtypes", "unchecked"})
+	public void getTestObjectTest() throws Exception {
+		// Setup
+		java.lang.Class<java.lang.Object> arg0 = (java.lang.Class<java.lang.Object>) java.lang.Class.forName("java.lang.Object");
+
+		// Run the test
+		java.lang.Object res = testDataGenerator.getTestObject(arg0);
+	}
+
+	@Test
+	@SuppressWarnings({"rawtypes", "unchecked"})
+	public void isPrimitiveTest() throws Exception {
+		// Setup
+		java.lang.Class<java.lang.Object> arg0 = (java.lang.Class<java.lang.Object>) java.lang.Class.forName("java.lang.Object");
+
+		// Run the test
+		boolean res = testDataGenerator.isPrimitive(arg0);
+	}
+}

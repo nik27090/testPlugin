@@ -1,11 +1,11 @@
 <idea-plugin>
     <id>org.example.testPlugin</id>
-    <name>MyTestIdeaPlugin</name>
-    <vendor email="support@kek.com" url="http://www.kek.com">Kek</vendor>
+    <name>UnitTestGeneratorPlugin</name>
+    <vendor email="support@email.com" url="http://www.website.com">Vendor</vendor>
     <version>1.0-SNAPSHOT</version>
 
     <description><![CDATA[
-    TEST application for me and my team lol kek chebyrek
+    Unit test com.generator, based on the fuzzing paradigm
     ]]></description>
 
     <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
@@ -14,32 +14,28 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <!-- Add your extensions here -->
-        <applicationService serviceImplementation="Settings.SettingsPlugin"/>
+        <applicationService serviceImplementation="com.settings.SettingsPlugin"/>
     </extensions>
 
+    <!--All of the actions, performed by this plugin-->
     <actions>
         <!-- Add your actions here -->
+
+        <!--Plugin menu-->
         <group id="testPlugin.Action" text="TestPlugin" description="About my plugin">
             <add-to-group group-id="MainMenu" anchor="last"/>
-            <action id="createAllTests.AllTestsAction" class="createAllTests.AllTestsAction" text="Create Tests"
-                    description="Create tests for all .class files">
-                <add-to-group group-id="testPlugin.Action" anchor="first"/>
-            </action>
         </group>
 
-        <action id="testPlugin.SettingsAction" class="Settings.SettingAction" text="Setting"
+        <!--FirstAction - Create tests for all compiled classes-->
+        <action id="com.actions.AllTestsAction" class="com.actions.AllTestsAction" text="Create Tests"
+                description="Create tests for all .class files">
+            <add-to-group group-id="testPlugin.Action" anchor="first"/>
+        </action>
+
+        <!--ThirdAction - Plugin settings-->
+        <action id="testPlugin.SettingsAction" class="com.settings.SettingAction" text="Setting"
                 description="Change path">
             <add-to-group group-id="testPlugin.Action" anchor="last"/>
-        </action>
-        <action id="createCustomTests.CustomTestsAction" class="createCustomTests.CustomTestsAction"
-                text="Create Custom Test">
-            <add-to-group group-id="testPlugin.Action" anchor="after"
-                          relative-to-action="createAllTests.AllTestsAction"/>
-        </action>
-        <action id="createOneTest.OneTestAction" class="createOneTest.OneTestAction" text="Creat Single Test">
-            <keyboard-shortcut keymap="$default" first-keystroke="ctrl alt Y"/>
-            <add-to-group group-id="testPlugin.Action" anchor="after"
-                          relative-to-action="createCustomTests.CustomTestsAction"/>
         </action>
     </actions>
 </idea-plugin>
